@@ -165,6 +165,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="terminator.h" />
+    <ClInclude Include="vignetteCreation.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="faceClass.cpp" />
@@ -173,6 +174,7 @@
     <ClCompile Include="objectDetection.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Terminator.cpp" />
+    <ClCompile Include="vignetteCreation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

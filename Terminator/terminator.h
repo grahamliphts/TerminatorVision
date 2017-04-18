@@ -10,6 +10,7 @@
 #include "objectDetection.h"
 #include "faceDetection.h"
 #include "graphCreation.h"
+#include "vignetteCreation.h"
 
 void update(cv::VideoCapture);
 void draw(std::vector<Object> , std::vector<Face> , cv::Mat ,cv::Mat*);

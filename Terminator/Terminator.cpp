@@ -1,12 +1,12 @@
 // Terminator.cpp : définit le point d'entrée pour l'application console.
 //
 
-
 #include "terminator.h"
+
 int main()
 {
 
-	cv::VideoCapture cameraStream(0);
+	cv::VideoCapture cameraStream(1);
 	if (!cameraStream.isOpened())
 	{
 		std::cout << "cannot open camera";
@@ -24,6 +24,7 @@ void update(cv::VideoCapture cameraStream)
 	std::vector<Object> objects;
 	std::vector<Face> faces;
 	cv::Mat graph;
+	cv::Mat vignette;
 
 	cv::Mat cameraFrame;
 
@@ -34,12 +35,11 @@ void update(cv::VideoCapture cameraStream)
 		objects = ObjectDetection(currentImg);
 		faces = FaceDetection(currentImg);
 		graph = GetGraph(currentImg);
+		vignette = GetVignette(currentImg, faces);
 
 		if (cv::waitKey(30) >= 0)
 			break;
 	}
-
-
 }
 
 void draw(std::vector<Object> objectList, std::vector<Face> faceList, cv::Mat Graph,cv::Mat* img)

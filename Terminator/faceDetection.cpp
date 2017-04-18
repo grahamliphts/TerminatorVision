@@ -34,39 +34,65 @@ std::vector<Face> FaceDetection(cv::Mat img)
 		}
 	}
 	
-	/*
+	
 	// LOCATING FACE SUBPART IN FACES
-	for each (Face curFace in faceList)
+	for(int it = 0; it < faceList.size(); it++)
 	{
+		Face curFace = faceList[it];
 		cv::Mat FaceImg;
 		FaceImg = img(curFace.face.outterRect);
+		//cv::imshow("face", FaceImg);
 
 		std::vector<cv::Rect> foundEyes;
-		foundEyes = Getfaces("HaarCascade/haarcascade_eye.xml", img, 200, 700);
-		if (foundFaces.size() > 0) {
-			for (int i = 0; i <= foundFaces.size() - 1; i++)
-				rectangle(img, foundFaces[i].br(), foundFaces[i].tl(), cv::Scalar(0, 0, 0), 1, 8, 0);
+		foundEyes = GetEyes("HaarCascade/haarcascade_eye_tree_eyeglasses.xml", FaceImg, 50, 100);
+		if (foundEyes.size() > 0) {
+			for (int i = 0; i <= foundEyes.size() - 1; i++)
+			{
+				//rectangle(FaceImg, foundEyes[i].br(), foundEyes[i].tl(), cv::Scalar(0, 255, 0), 1, 8, 0);
+				cv::Rect tempRect = foundEyes[i];
+				tempRect.x = curFace.face.outterRect.x + foundEyes[i].x;
+				tempRect.y = curFace.face.outterRect.y + foundEyes[i].y;
+
+				if(i == 0)
+					faceList[i].leftEye.outterRect = tempRect;
+				if(i == 1)
+					faceList[i].rightEye.outterRect = tempRect;
+			}
 		}
 		else
 		{
-			if (foundFaces.size() > 0) {
-				foundEyes = Getfaces("HaarCascade/haarcascade_eye_tree_eyeglasses.xml", img, 200, 700);
-				for (int i = 0; i <= foundFaces.size() - 1; i++)
-					rectangle(img, foundFaces[i].br(), foundFaces[i].tl(), cv::Scalar(0, 0, 0), 1, 8, 0);
+			foundEyes.clear();
+			if (foundEyes.size() > 0 ) {
+				foundEyes = GetEyes("HaarCascade/haarcascade_eye.xml", FaceImg, 50, 100);
+				for (int i = 0; i <= foundEyes.size() - 1; i++)
+				{
+					//rectangle(FaceImg, foundEyes[i].br(), foundEyes[i].tl(), cv::Scalar(0, 255, 0), 1, 8, 0);
+					cv::Rect tempRect = foundEyes[i];
+					tempRect.x = curFace.face.outterRect.x + foundEyes[i].x;
+					tempRect.y = curFace.face.outterRect.y + foundEyes[i].y;
+
+					if (i == 0)
+					{
+						faceList[i].leftEye.outterRect = tempRect;
+					}
+					if (i == 1)
+						faceList[i].rightEye.outterRect = tempRect;
+				}
 			}
 		}
 
 	}
-	*/
+	
 
 	//Show the results
 	//std::cout << faceList.size() <<std::endl;
 	for each (Face curFace in faceList)
 	{
 		rectangle(img, curFace.face.outterRect.br(), curFace.face.outterRect.tl(), cv::Scalar(0, 0, 0), 1, 8, 0); // Draw Face outter rect
-		rectangle(img, curFace.leftEye.outterRect.br(), curFace.leftEye.outterRect.tl(), cv::Scalar(0, 0, 0), 1, 8, 0); // Draw Left eye
-		rectangle(img, curFace.rightEye.outterRect.br(), curFace.rightEye.outterRect.tl(), cv::Scalar(0, 0, 0), 1, 8, 0); // Draw Right eye
-		rectangle(img, curFace.mouse.outterRect.br(), curFace.mouse.outterRect.tl(), cv::Scalar(0, 0, 0), 1, 8, 0); // Draw mouse
+		rectangle(img, curFace.leftEye.outterRect.br(), curFace.leftEye.outterRect.tl(), cv::Scalar(0, 255, 0), 1, 8, 0); // Draw Left eye
+		rectangle(img, curFace.rightEye.outterRect.br(), curFace.rightEye.outterRect.tl(), cv::Scalar(0, 255, 0), 1, 8, 0); // Draw Right eye
+		rectangle(img, curFace.mouse.outterRect.br(), curFace.mouse.outterRect.tl(), cv::Scalar(0, 0, 255), 1, 8, 0); // Draw mouse
+		rectangle(img, curFace.noze.outterRect.br(), curFace.noze.outterRect.tl(), cv::Scalar(255, 0, 0), 1, 8, 0); // Draw mouse
 
 	}
 

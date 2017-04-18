@@ -1,7 +1,8 @@
 #pragma once
 class point {
-	float x, y;
 
+	float x, y;
+public:
 	point(float a, float b)
 	{
 		x = a;
@@ -12,4 +13,5 @@ class point {
 		x = 0;
 		y = 0;
 	}
+
 };

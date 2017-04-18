@@ -18,7 +18,6 @@ int main()
 
 	return 0;
 }
-
 void update(cv::VideoCapture cameraStream)
 {
 	cv::Mat currentImg;
@@ -43,8 +42,11 @@ void update(cv::VideoCapture cameraStream)
 
 }
 
-void draw(std::vector<Object>, std::vector<Face>, cv::Mat Graph)
+void draw(std::vector<Object> objectList, std::vector<Face> faceList, cv::Mat Graph,cv::Mat* img)
 {
+
+	
+
 }
 
 

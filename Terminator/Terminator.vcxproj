@@ -167,6 +167,7 @@
     <ClInclude Include="terminator.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="faceClass.cpp" />
     <ClCompile Include="faceDetection.cpp" />
     <ClCompile Include="graphCreation.cpp" />
     <ClCompile Include="objectDetection.cpp" />

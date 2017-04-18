@@ -9,4 +9,6 @@ public:
 	Object mouse;
 	Object noze;
 	Object face;
+
+	Face();
 };

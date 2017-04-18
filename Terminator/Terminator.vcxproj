@@ -156,10 +156,20 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="faceClass.h" />
+    <ClInclude Include="faceDetection.h" />
+    <ClInclude Include="graphCreation.h" />
+    <ClInclude Include="objectClass.h" />
+    <ClInclude Include="objectDetection.h" />
+    <ClInclude Include="pointClass.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="terminator.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="faceDetection.cpp" />
+    <ClCompile Include="graphCreation.cpp" />
+    <ClCompile Include="objectDetection.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Terminator.cpp" />
   </ItemGroup>

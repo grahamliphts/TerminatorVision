@@ -12,4 +12,4 @@
 #include "graphCreation.h"
 
 void update(cv::VideoCapture);
-void draw(std::vector<Object>, std::vector<Face>, cv::Mat Graph);
+void draw(std::vector<Object> , std::vector<Face> , cv::Mat ,cv::Mat*);

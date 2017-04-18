@@ -66,6 +66,9 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="vignetteCreation.cpp">
+		<Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="faceClass.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>

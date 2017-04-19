@@ -1,62 +1,69 @@
 #include "faceDetection.h"
 
-std::vector<Face> FaceDetection(cv::Mat img,Classifiers* haarManager)
+std::vector<Face> FaceDetection(cv::Mat img, Classifiers* haarManager)
 {
 
 	int MinFaceSize = 120;
-	int eyeArea = 4 ;
-	int mouthArea = 2;
+	int eyeArea = 4;
+	int mouthArea = 3;
+	
 	// LOCATING FACES IN IMAGE
 	std::vector<Face> faceList;
-	std::vector<cv::Rect> foundFaces;
+	std::vector<cv::Rect> foundFacesFront;
+	std::vector<cv::Rect> foundFacesSide;
 	cv::Point2f center;
 	Face tempFace;
+	bool FaceShared = false;
 	//img = cv::imread("john-cena.jpg", CV_LOAD_IMAGE_COLOR);
 
-	foundFaces = Getfaces(&haarManager->faceClassifier,img, MinFaceSize,400);
-	if (foundFaces.size() > 0) {	 
-		for (int i = 0; i < foundFaces.size(); i++) {
-			center = (foundFaces[i].br() + foundFaces[i].tl())*0.5;
-			tempFace.face.outterRect = foundFaces[i];
+	foundFacesFront = Getfaces(&haarManager->faceClassifier, img, MinFaceSize, img.cols);
+	if (foundFacesFront.size() > 0) {
+		for (int i = 0; i < foundFacesFront.size(); i++) {
+			center = (foundFacesFront[i].br() + foundFacesFront[i].tl())*0.5;
+			tempFace.face.outterRect = foundFacesFront[i];
 			tempFace.face.barycentre = point::point(center.x, center.y);
 			faceList.push_back(tempFace);
 		}
 	}
 
-	else
-	{
-		
-		foundFaces = Getfaces(&haarManager->faceSideClassifier, img, MinFaceSize, 400);
-		if (foundFaces.size() > 0) {
-			for (int i = 0; i < foundFaces.size(); i++) {
-				center = (foundFaces[i].br() + foundFaces[i].tl())*0.5;
-				tempFace.face.outterRect = foundFaces[i];
+	foundFacesSide = Getfaces(&haarManager->faceSideClassifier, img, MinFaceSize, img.cols);
+	if (foundFacesSide.size() > 0) {
+		for (int i = 0; i < foundFacesSide.size(); i++) {
+			for each (cv::Rect frontface in foundFacesFront)
+			{
+				FaceShared = (((foundFacesSide[0] & foundFacesSide[i]).area()) > 0);
+			}
+			if (!FaceShared)
+			{
+				center = (foundFacesSide[i].br() + foundFacesSide[i].tl())*0.5;
+				tempFace.face.outterRect = foundFacesSide[i];
 				tempFace.face.barycentre = point::point(center.x, center.y);
 				faceList.push_back(tempFace);
+				FaceShared = false;
 			}
 		}
 	}
-	
-	
+
+
 	// LOCATING FACE SUBPART IN FACES
 	Face curFace;
 	cv::Mat FaceImg;
 	cv::Mat topFaceImage;
 	cv::Rect tempRect;
 	cv::Mat bottomFaceImg;
-	std::vector<cv::Rect> foundEyes;	
+	std::vector<cv::Rect> foundEyes;
 	std::vector<cv::Rect> FoundMouth;
 	std::vector<cv::Rect> FoundSmile;
 	std::vector<cv::Rect> FoundNoze;
 
-	for(int it = 0; it < faceList.size(); it++)
+	for (int it = 0; it < faceList.size(); it++)
 	{
 		foundEyes.clear();
 		foundEyes.reserve(2);
 
 		curFace = faceList[it];
 		FaceImg = img(curFace.face.outterRect);
-		topFaceImage = FaceImg(cv::Rect(0, 0, FaceImg.cols, FaceImg.rows / 2));		
+		topFaceImage = FaceImg(cv::Rect(0, 0, FaceImg.cols, FaceImg.rows / 2));
 		foundEyes = GetEyes(&haarManager->eyeClassifierGlasses, topFaceImage, MinFaceSize / eyeArea, topFaceImage.rows);
 
 		if (foundEyes.size() > 0) {
@@ -65,17 +72,17 @@ std::vector<Face> FaceDetection(cv::Mat img,Classifiers* haarManager)
 				tempRect = foundEyes[i];
 				tempRect.x = curFace.face.outterRect.x + foundEyes[i].x;
 				tempRect.y = curFace.face.outterRect.y + foundEyes[i].y;
-				if(i == 0)
+				if (i == 0)
 					faceList[it].leftEye.outterRect = tempRect;
-				if(i == 1)
+				if (i == 1)
 					faceList[it].rightEye.outterRect = tempRect;
-				
+
 			}
 		}
 		else
 		{
 			foundEyes.clear();
-			if (foundEyes.size() > 0 ) {
+			if (foundEyes.size() > 0) {
 				foundEyes = GetEyes(&haarManager->eyeClassifierDefault, topFaceImage, MinFaceSize / eyeArea, topFaceImage.rows);
 				for (int i = 0; i <= foundEyes.size() - 1; i++)
 				{
@@ -89,48 +96,58 @@ std::vector<Face> FaceDetection(cv::Mat img,Classifiers* haarManager)
 					}
 					if (i == 1)
 						faceList[it].rightEye.outterRect = tempRect;
-						
+
 				}
 			}
 		}
-		/*
+
 		FoundNoze.clear();
 		FoundNoze.reserve(1);
-
+		int offset = 0;
 		FoundNoze = GetNoze(&haarManager->nozeClassifier, FaceImg, MinFaceSize / mouthArea, FaceImg.rows / 2);
 		if (FoundNoze.size() > 0) {
 			tempRect = FoundNoze[0];
 			tempRect.x = curFace.face.outterRect.x + FoundNoze[0].x;
 			tempRect.y = curFace.face.outterRect.y + FoundNoze[0].y;
 			faceList[it].noze.outterRect = tempRect;
+
+			offset = FoundNoze[0].y + (FoundNoze[0].height * 0.7);
 		}
-		*/
+
 
 		FoundMouth.clear();
 		FoundMouth.reserve(1);
-		bottomFaceImg = FaceImg(cv::Rect(0, FaceImg.rows/2, FaceImg.cols, FaceImg.rows / 2));
+		//sharedNozeMouth = ((FoundMouth[0] & faceList[it].noze.outterRect).area()) > 0;
 
-		FoundMouth = GetMouth(&haarManager->mouthClassifier, bottomFaceImg, MinFaceSize / mouthArea, FaceImg.rows/2);
+		if (offset < FaceImg.rows)
+		{
+			bottomFaceImg = FaceImg(cv::Rect(0, offset, FaceImg.cols, FaceImg.rows - offset));
+		}
+		else
+			bottomFaceImg = FaceImg(cv::Rect(0, FaceImg.rows / 2, FaceImg.cols, FaceImg.rows / 2));
+
+		FoundMouth = GetMouth(&haarManager->mouthClassifier, bottomFaceImg, MinFaceSize / mouthArea, FaceImg.rows / 2);
 		if (FoundMouth.size() > 0) {
-				tempRect = FoundMouth[0];
-				tempRect.x = curFace.face.outterRect.x + FoundMouth[0].x;
-				tempRect.y = curFace.face.outterRect.y + FoundMouth[0].y + FaceImg.rows / 2;
-				faceList[it].mouse.outterRect = tempRect;
-				
+
+			tempRect = FoundMouth[0];
+			tempRect.x = curFace.face.outterRect.x + FoundMouth[0].x;
+			tempRect.y = curFace.face.outterRect.y + FoundMouth[0].y + (offset);
+			faceList[it].mouse.outterRect = tempRect;
+
 			FoundSmile.clear();
 			FoundSmile.reserve(1);
 			FoundSmile = GetSmile(&haarManager->smileClassifer, bottomFaceImg, MinFaceSize / mouthArea, tempRect.width);
 			if (FoundSmile.size() > 0) {
-					faceList[it].isSmile = true;
+				faceList[it].isSmile = true;
 			}
 			else
 				faceList[it].isSmile = false;
-				
+
 		}
-		
+
 
 	}
-	
+
 
 	//Show the results
 	for each (Face curFace in faceList)
@@ -138,7 +155,7 @@ std::vector<Face> FaceDetection(cv::Mat img,Classifiers* haarManager)
 		rectangle(img, curFace.face.outterRect.br(), curFace.face.outterRect.tl(), cv::Scalar(0, 0, 0), 1, 8, 0); // Draw Face outter rect
 		rectangle(img, curFace.leftEye.outterRect.br(), curFace.leftEye.outterRect.tl(), cv::Scalar(0, 255, 0), 1, 8, 0); // Draw Left eye
 		rectangle(img, curFace.rightEye.outterRect.br(), curFace.rightEye.outterRect.tl(), cv::Scalar(0, 255, 0), 1, 8, 0); // Draw Right eye
-		if(curFace.isSmile)
+		if (curFace.isSmile)
 			rectangle(img, curFace.mouse.outterRect.br(), curFace.mouse.outterRect.tl(), cv::Scalar(0, 255, 255), 1, 8, 0); // Draw mouse
 		else
 			rectangle(img, curFace.mouse.outterRect.br(), curFace.mouse.outterRect.tl(), cv::Scalar(0, 0, 255), 1, 8, 0); // Draw mouse
@@ -153,7 +170,7 @@ std::vector<Face> FaceDetection(cv::Mat img,Classifiers* haarManager)
 	return faceList;
 }
 
-std::vector<cv::Rect> Getfaces(cv::CascadeClassifier* detector,cv::Mat img,int minSize, int maxSize)
+std::vector<cv::Rect> Getfaces(cv::CascadeClassifier* detector, cv::Mat img, int minSize, int maxSize)
 {
 	int groundThreshold = 3;
 	double scaleStep = 1.1;

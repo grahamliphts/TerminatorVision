@@ -31,15 +31,17 @@ void update(cv::VideoCapture cameraStream)
 	cv::Mat cameraFrame;
 	Classifiers HaarManager("HaarCascade/haarcascade_eye.xml",
 		"HaarCascade/haarcascade_eye_tree_eyeglasses.xml",
-		"haarcascade_mcs_nose.xml",
+		"HaarCascade/haarcascade_mcs_nose.xml",
 		"HaarCascade/haarcascade_mcs_mouth.xml",
 		"HaarCascade/haarcascade_frontalface_default.xml",
 		"HaarCascade/haarcascade_profileface.xml",
 		"HaarCascade/haarcascade_smile.xml");
 
+
 	while(true){
 		cameraStream.read(currentImg);
 		//currentImg = cv::imread("john-cena.jpg", CV_LOAD_IMAGE_COLOR);
+		currentImg = cv::imread("Terminator_metal.jpg", CV_LOAD_IMAGE_COLOR);
 		imshow("cam", currentImg);
 
 		objects = ObjectDetection(currentImg);

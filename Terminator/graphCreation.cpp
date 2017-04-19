@@ -117,35 +117,35 @@ std::vector<cv::Mat> GetGraphSplitChannels(cv::Mat img, int step, int height, in
 	/// Draw for each channel
 	for (int i = step; i < histSize; i += step)
 	{
-		//create rectangles
-		auto pt1 = cv::Point(bin_w * (i - step), hist_h);
-		auto pt2 = cv::Point(bin_w * i, hist_h);
+		////create rectangles
+		//auto pt1 = cv::Point(bin_w * (i - step), hist_h);
+		//auto pt2 = cv::Point(bin_w * i, hist_h);
 
-		auto pt3 = cv::Point(bin_w * i, hist_h - cvRound(b_hist.at<float>(i)));
-		auto pt4 = cv::Point(bin_w * (i - step), hist_h - cvRound(b_hist.at<float>(i - step)));
-		cv::Point ptsB[] = { pt1, pt2, pt3, pt4, pt1 };
-		fillConvexPoly(histImageB, ptsB, 5, cv::Scalar(255, 255, 255));
+		//auto pt3 = cv::Point(bin_w * i, hist_h - cvRound(b_hist.at<float>(i)));
+		//auto pt4 = cv::Point(bin_w * (i - step), hist_h - cvRound(b_hist.at<float>(i - step)));
+		//cv::Point ptsB[] = { pt1, pt2, pt3, pt4, pt1 };
+		//fillConvexPoly(histImageB, ptsB, 5, cv::Scalar(255, 255, 255));
 
-		pt3 = cv::Point(bin_w * i, hist_h - cvRound(g_hist.at<float>(i)));
-		pt4 = cv::Point(bin_w * (i - step), hist_h - cvRound(g_hist.at<float>(i - step)));
-		cv::Point ptsG[] = { pt1, pt2, pt3, pt4, pt1 };
-		fillConvexPoly(histImageG, ptsG, 5, cv::Scalar(255, 255, 255));
+		//pt3 = cv::Point(bin_w * i, hist_h - cvRound(g_hist.at<float>(i)));
+		//pt4 = cv::Point(bin_w * (i - step), hist_h - cvRound(g_hist.at<float>(i - step)));
+		//cv::Point ptsG[] = { pt1, pt2, pt3, pt4, pt1 };
+		//fillConvexPoly(histImageG, ptsG, 5, cv::Scalar(255, 255, 255));
 
-		pt3 = cv::Point(bin_w * i, hist_h - cvRound(r_hist.at<float>(i)));
-		pt4 = cv::Point(bin_w * (i - step), hist_h - cvRound(r_hist.at<float>(i - step)));
-		cv::Point ptsR[] = { pt1, pt2, pt3, pt4, pt1 };
-		fillConvexPoly(histImageR, ptsR, 5, cv::Scalar(255, 255, 255));
+		//pt3 = cv::Point(bin_w * i, hist_h - cvRound(r_hist.at<float>(i)));
+		//pt4 = cv::Point(bin_w * (i - step), hist_h - cvRound(r_hist.at<float>(i - step)));
+		//cv::Point ptsR[] = { pt1, pt2, pt3, pt4, pt1 };
+		//fillConvexPoly(histImageR, ptsR, 5, cv::Scalar(255, 255, 255));
 
-		////create lines
-		//line(histImageB, cv::Point(bin_w*(i - step), hist_h - cvRound(b_hist.at<float>(i - step))),
-		//	cv::Point(bin_w*(i), hist_h - cvRound(b_hist.at<float>(i))),
-		//	cv::Scalar(255, 125, 0), 2, 8, 0);
-		//line(histImageG, cv::Point(bin_w*(i - step), hist_h - cvRound(g_hist.at<float>(i - step))),
-		//	cv::Point(bin_w*(i), hist_h - cvRound(g_hist.at<float>(i))),
-		//	cv::Scalar(125, 255, 0), 2, 8, 0);
-		//line(histImageR, cv::Point(bin_w*(i - step), hist_h - cvRound(r_hist.at<float>(i - step))),
-		//	cv::Point(bin_w*(i), hist_h - cvRound(r_hist.at<float>(i))),
-		//	cv::Scalar(0, 125, 255), 2, 8, 0);
+		//create lines
+		line(histImageB, cv::Point(bin_w*(i - step), hist_h - cvRound(b_hist.at<float>(i - step))),
+			cv::Point(bin_w*(i), hist_h - cvRound(b_hist.at<float>(i))),
+			cv::Scalar(255, 255, 255), 2, 8, 0);
+		line(histImageG, cv::Point(bin_w*(i - step), hist_h - cvRound(g_hist.at<float>(i - step))),
+			cv::Point(bin_w*(i), hist_h - cvRound(g_hist.at<float>(i))),
+			cv::Scalar(255, 255, 255), 2, 8, 0);
+		line(histImageR, cv::Point(bin_w*(i - step), hist_h - cvRound(r_hist.at<float>(i - step))),
+			cv::Point(bin_w*(i), hist_h - cvRound(r_hist.at<float>(i))),
+			cv::Scalar(255, 255, 255), 2, 8, 0);
 	}
 
 	//std::vector<cv::Mat> data = { histImageB, histImageG, histImageR };

@@ -64,6 +64,11 @@ cv::Mat& GetVignette(cv::Mat& img, std::vector<Face>& faces, cv::Mat& vignette)
 	subVignetteDst.copyTo(vignetteDst(cv::Rect(vignetteDst.rows - subSize.width, 0, subVignetteDst.cols, subVignetteDst.rows)));
 	vignetteDst.copyTo(img(cv::Rect(10, 10, vignetteDst.cols, vignetteDst.rows)));
 
+	int fontFace = cv::FONT_HERSHEY_DUPLEX;
+	int fontScale = 1;
+	cv::putText(img, "Name : ", cv::Point(20 + size.width, 40), fontFace, fontScale, cv::Scalar::all(255), 1, CV_AA);
+	cv::putText(img, "Age : ", cv::Point(20 + size.width, 80), fontFace, fontScale, cv::Scalar::all(255), 1, CV_AA);
+
 	cv::namedWindow("Final", 0);
 	cv::resizeWindow("Final", 680, 400);
 	cv::imshow("Final", img);

@@ -16,7 +16,7 @@ int main()
 	if (!cameraStream.isOpened())
 	{
 		std::cout << "cannot open camera";
-		
+
 		cvWaitKey(0);
 		return 0;
 	}
@@ -141,12 +141,24 @@ void draw(std::vector<Object> objectList, std::vector<Face> faceList, cv::Mat Gr
 
 	int fontFace = cv::FONT_HERSHEY_COMPLEX_SMALL;
 	int fontScale = 1;
-	
-	srand(time(NULL));
+
+
 	int randomNumber = rand() % 3;
 	cv::String name = "Name : " + randomName[randomNumber];
 	cv::putText(imgresult, name, cv::Point(20 + vignetteManager.size, 40), fontFace, fontScale, cv::Scalar::all(255), 1, CV_AA);
 
+	for (int line = 0; line < 5; line++)
+	{
+		cv::String useless;
+		for (int it = 0; it < 10; it++) {
+			int randomval = rand() % 2;
+			if (randomval == 0)
+				useless += "1";
+			else
+				useless += "0";
+		}
+		cv::putText(imgresult, useless, cv::Point(0, (img.rows / 2) + (20*line)), fontFace, fontScale, cv::Scalar::all(255), 1, CV_AA);
+	}
 	imshow("Terminator Vision", imgresult);
 	//int key2 = cv::waitKey(20);
 }
@@ -171,21 +183,21 @@ void update(cv::VideoCapture cameraStream)
 	cameraStream.read(currentImg);
 	Vignette vignetteManager(currentImg);
 
-	while(true){
+	while (true) {
 		cameraStream.read(currentImg);
 		//currentImg = cv::imread("john-cena.jpg", CV_LOAD_IMAGE_COLOR);
 		//currentImg = cv::imread("Terminator_metal.jpg", CV_LOAD_IMAGE_COLOR);
 		//imshow("cam", currentImg);
 
 		objects = ObjectDetection(currentImg);
-		faces = FaceDetection(currentImg,&HaarManager);
+		faces = FaceDetection(currentImg, &HaarManager);
 		//graph = GetGraph(currentImg);
 		vignetteManager.Process(currentImg, faces);
 		draw(objects, faces, graph, vignetteManager, currentImg);
-	//	cv::waitKey(0);
+		//	cv::waitKey(0);
 		if (cv::waitKey(30) >= 0)
 			break;
-	
+
 	}
 }
 

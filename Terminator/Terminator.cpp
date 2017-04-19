@@ -2,6 +2,8 @@
 //
 
 #include "terminator.h"
+#include <cstdlib>
+#include <time.h>
 
 std::vector<int> lastObjectCount;
 
@@ -34,11 +36,11 @@ void draw(std::vector<Object> objectList, std::vector<Face> faceList, cv::Mat Gr
 	cv::Mat rgbaImg[4] = { cv::Mat(img.size(),CV_8UC1,cv::Scalar(0)),cv::Mat(img.size(),CV_8UC1,cv::Scalar(0)),rgb[2],cv::Mat(img.size(),CV_8UC1,cv::Scalar(1)) };
 	merge(rgbaImg, 4, imgresult);
 
-	
+
 	for each (Face curFace in faceList)
 	{
 		//rectangle(img, curFace.face.outterRect.br(), curFace.face.outterRect.tl(), cv::Scalar(0, 0, 0), 1, 8, 0); // Draw Face outter rect
-		
+
 		rectangle(img, curFace.leftEye.outterRect.br(), curFace.leftEye.outterRect.tl(), cv::Scalar(0, 255, 0), 1, 8, 0); // Draw Left eye
 		rectangle(img, curFace.rightEye.outterRect.br(), curFace.rightEye.outterRect.tl(), cv::Scalar(0, 255, 0), 1, 8, 0); // Draw Right eye
 		/*if (curFace.isSmile)
@@ -60,7 +62,7 @@ void draw(std::vector<Object> objectList, std::vector<Face> faceList, cv::Mat Gr
 			{
 				draw = (((blob.outterRect & face.face.outterRect).area()) > 0);
 				draw = !draw;
-;
+				;
 			}
 			if (draw)
 			{
@@ -135,11 +137,15 @@ void draw(std::vector<Object> objectList, std::vector<Face> faceList, cv::Mat Gr
 	}
 
 	//vignette.copyTo(imgresult(cv::Rect(10, 10, vignette.cols, vignette.rows)));
+	std::string randomName[] = { "Robert", "Luna MoonSilver", "John Cena" };
 
-	int fontFace = cv::FONT_HERSHEY_DUPLEX;
+	int fontFace = cv::FONT_HERSHEY_COMPLEX_SMALL;
 	int fontScale = 1;
-	cv::putText(imgresult, "Name : ", cv::Point(20 + vignetteManager.size, 40), fontFace, fontScale, cv::Scalar::all(255), 1, CV_AA);
-	cv::putText(imgresult, "Age : ", cv::Point(20 + vignetteManager.size, 80), fontFace, fontScale, cv::Scalar::all(255), 1, CV_AA);
+	
+	srand(time(NULL));
+	int randomNumber = rand() % 3;
+	cv::String name = "Name : " + randomName[randomNumber];
+	cv::putText(imgresult, name, cv::Point(20 + vignetteManager.size, 40), fontFace, fontScale, cv::Scalar::all(255), 1, CV_AA);
 
 	imshow("Terminator Vision", imgresult);
 	//int key2 = cv::waitKey(20);

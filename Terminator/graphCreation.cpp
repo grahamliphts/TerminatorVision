@@ -105,9 +105,9 @@ std::vector<cv::Mat> GetGraphSplitChannels(cv::Mat img, int step, int height, in
 	int hist_h = height;
 	int bin_w = cvRound(static_cast<double>(hist_w) / histSize);
 
-	cv::Mat histImageB(hist_h, hist_w, CV_8UC4, cv::Scalar(0, 0, 0, 0));
-	cv::Mat histImageG(hist_h, hist_w, CV_8UC4, cv::Scalar(0, 0, 0, 0));
-	cv::Mat histImageR(hist_h, hist_w, CV_8UC4, cv::Scalar(0, 0, 0, 0));
+	cv::Mat histImageB(hist_h, hist_w, CV_8UC3, cv::Scalar(0, 0, 0));
+	cv::Mat histImageG(hist_h, hist_w, CV_8UC3, cv::Scalar(0, 0, 0));
+	cv::Mat histImageR(hist_h, hist_w, CV_8UC3, cv::Scalar(0, 0, 0));
 
 	/// Normalize the result to [ 0, histImage.rows ]
 	normalize(b_hist, b_hist, 0, histImageB.rows, cv::NORM_MINMAX, -1, cv::Mat());
@@ -124,28 +124,28 @@ std::vector<cv::Mat> GetGraphSplitChannels(cv::Mat img, int step, int height, in
 		auto pt3 = cv::Point(bin_w * i, hist_h - cvRound(b_hist.at<float>(i)));
 		auto pt4 = cv::Point(bin_w * (i - step), hist_h - cvRound(b_hist.at<float>(i - step)));
 		cv::Point ptsB[] = { pt1, pt2, pt3, pt4, pt1 };
-		fillConvexPoly(histImageB, ptsB, 5, cv::Scalar(255, 0, 0));
+		fillConvexPoly(histImageB, ptsB, 5, cv::Scalar(255, 255, 255));
 
 		pt3 = cv::Point(bin_w * i, hist_h - cvRound(g_hist.at<float>(i)));
 		pt4 = cv::Point(bin_w * (i - step), hist_h - cvRound(g_hist.at<float>(i - step)));
 		cv::Point ptsG[] = { pt1, pt2, pt3, pt4, pt1 };
-		fillConvexPoly(histImageG, ptsG, 5, cv::Scalar(0, 255, 0));
+		fillConvexPoly(histImageG, ptsG, 5, cv::Scalar(255, 255, 255));
 
 		pt3 = cv::Point(bin_w * i, hist_h - cvRound(r_hist.at<float>(i)));
 		pt4 = cv::Point(bin_w * (i - step), hist_h - cvRound(r_hist.at<float>(i - step)));
 		cv::Point ptsR[] = { pt1, pt2, pt3, pt4, pt1 };
-		fillConvexPoly(histImageR, ptsR, 5, cv::Scalar(0, 0, 255));
+		fillConvexPoly(histImageR, ptsR, 5, cv::Scalar(255, 255, 255));
 
-		//create lines
-		line(histImageB, cv::Point(bin_w*(i - step), hist_h - cvRound(b_hist.at<float>(i - step))),
-			cv::Point(bin_w*(i), hist_h - cvRound(b_hist.at<float>(i))),
-			cv::Scalar(255, 125, 0), 2, 8, 0);
-		line(histImageG, cv::Point(bin_w*(i - step), hist_h - cvRound(g_hist.at<float>(i - step))),
-			cv::Point(bin_w*(i), hist_h - cvRound(g_hist.at<float>(i))),
-			cv::Scalar(125, 255, 0), 2, 8, 0);
-		line(histImageR, cv::Point(bin_w*(i - step), hist_h - cvRound(r_hist.at<float>(i - step))),
-			cv::Point(bin_w*(i), hist_h - cvRound(r_hist.at<float>(i))),
-			cv::Scalar(0, 125, 255), 2, 8, 0);
+		////create lines
+		//line(histImageB, cv::Point(bin_w*(i - step), hist_h - cvRound(b_hist.at<float>(i - step))),
+		//	cv::Point(bin_w*(i), hist_h - cvRound(b_hist.at<float>(i))),
+		//	cv::Scalar(255, 125, 0), 2, 8, 0);
+		//line(histImageG, cv::Point(bin_w*(i - step), hist_h - cvRound(g_hist.at<float>(i - step))),
+		//	cv::Point(bin_w*(i), hist_h - cvRound(g_hist.at<float>(i))),
+		//	cv::Scalar(125, 255, 0), 2, 8, 0);
+		//line(histImageR, cv::Point(bin_w*(i - step), hist_h - cvRound(r_hist.at<float>(i - step))),
+		//	cv::Point(bin_w*(i), hist_h - cvRound(r_hist.at<float>(i))),
+		//	cv::Scalar(0, 125, 255), 2, 8, 0);
 	}
 
 	//std::vector<cv::Mat> data = { histImageB, histImageG, histImageR };
@@ -174,16 +174,16 @@ cv::Mat RedPicture(cv::Mat img)
 	return outR;
 }
 
-cv::Mat GetGraphObjects(cv::Mat img, int objCount, int height, int width)
+cv::Mat GetGraphObjects(int objCount, int height, int width)
 {
-	cv::Mat out(img.size(), CV_8UC3);
+	cv::Mat out(height, width, CV_8UC3);
 	out.setTo(0);
 
 	if (lastObjectCount.size() == 10)
 		lastObjectCount.erase(lastObjectCount.begin());
 
 	lastObjectCount.push_back(objCount);
-	int intervalY = out.size().width / 10;
+	int intervalY = width / 10;
 
 	for (int i = 1; i< lastObjectCount.size(); ++i)
 	{
@@ -193,12 +193,28 @@ cv::Mat GetGraphObjects(cv::Mat img, int objCount, int height, int width)
 		auto pt3 = cv::Point(intervalY * i, lastObjectCount[i] * 10);
 		auto pt4 = cv::Point(intervalY*(i - 1), lastObjectCount[i - 1] * 10);
 		cv::Point pts[] = { pt1, pt2, pt3, pt4, pt1 };
-		fillConvexPoly(out, pts, 5, cv::Scalar(0, 240, 240));
+		fillConvexPoly(out, pts, 5, cv::Scalar(255, 255, 255));
 
-		cv::line(out, cv::Point(intervalY*(i - 1), lastObjectCount[i - 1] * 10), cv::Point(intervalY*i, lastObjectCount[i] * 10), cv::Scalar(0, 255, 255), 2, 8, 0);
+		//cv::line(out, cv::Point(intervalY*(i - 1), lastObjectCount[i - 1] * 10), cv::Point(intervalY*i, lastObjectCount[i] * 10), cv::Scalar(255, 255, 255), 2, 8, 0);
 	}
 
 	cv::imshow("ObjCount", out);
 
 	return out;
+}
+
+void connectAll(cv::Mat img, int objCount)
+{
+	cv::Mat out(img);
+	auto pipVect = GetGraphSplitChannels(img);
+
+	for (cv::Mat mat : pipVect)
+	{
+		mat.copyTo(out(cv::Rect(10, 10, mat.cols, mat.rows)), mat);
+	}
+
+	auto pip = GetGraphObjects(objCount);
+	pip.copyTo(out(cv::Rect(0, 0, pip.cols, pip.rows)), pip);
+
+	cv::imshow("effect", out);
 }

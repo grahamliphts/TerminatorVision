@@ -139,18 +139,26 @@ std::vector<cv::Mat> GetGraphSplitChannels(cv::Mat img, int step, int height, in
 		//create lines
 		line(histImageB, cv::Point(bin_w*(i - step), hist_h - cvRound(b_hist.at<float>(i - step))),
 			cv::Point(bin_w*(i), hist_h - cvRound(b_hist.at<float>(i))),
-			cv::Scalar(255, 255, 255), 2, 8, 0);
+			cv::Scalar(255, 255, 255), 8, 8, 0);
 		line(histImageG, cv::Point(bin_w*(i - step), hist_h - cvRound(g_hist.at<float>(i - step))),
 			cv::Point(bin_w*(i), hist_h - cvRound(g_hist.at<float>(i))),
-			cv::Scalar(255, 255, 255), 2, 8, 0);
+			cv::Scalar(255, 255, 255), 8, 8, 0);
 		line(histImageR, cv::Point(bin_w*(i - step), hist_h - cvRound(r_hist.at<float>(i - step))),
 			cv::Point(bin_w*(i), hist_h - cvRound(r_hist.at<float>(i))),
-			cv::Scalar(255, 255, 255), 2, 8, 0);
+			cv::Scalar(255, 255, 255), 8, 8, 0);
 	}
+
+	const int dist = 50;
+	cv::Mat grid(hist_h, hist_w, CV_8UC3, cv::Scalar(0, 0, 0));
+
+	for (int i = 0; i < height; i += dist)
+		cv::line(grid, cv::Point(0, i), cv::Point(width, i), cv::Scalar(255, 255, 255), 4);
+	for (int i = 0; i < width; i += dist)
+		cv::line(grid, cv::Point(i, 0), cv::Point(i, height), cv::Scalar(255, 255, 255), 4);
 
 	//std::vector<cv::Mat> data = { histImageB, histImageG, histImageR };
 
-	return { histImageB, histImageG, histImageR };
+	return { histImageB, histImageG, histImageR, grid };
 }
 
 cv::Mat RedPicture(cv::Mat img)
@@ -187,16 +195,23 @@ cv::Mat GetGraphObjects(int objCount, int height, int width)
 
 	for (int i = 1; i< lastObjectCount.size(); ++i)
 	{
-		auto pt1 = cv::Point(intervalY*(i - 1), 0);
+		/*auto pt1 = cv::Point(intervalY*(i - 1), 0);
 		auto pt2 = cv::Point(intervalY * i, 0);
 
 		auto pt3 = cv::Point(intervalY * i, lastObjectCount[i] * 10);
 		auto pt4 = cv::Point(intervalY*(i - 1), lastObjectCount[i - 1] * 10);
 		cv::Point pts[] = { pt1, pt2, pt3, pt4, pt1 };
-		fillConvexPoly(out, pts, 5, cv::Scalar(255, 255, 255));
+		fillConvexPoly(out, pts, 5, cv::Scalar(255, 255, 255));*/
 
-		//cv::line(out, cv::Point(intervalY*(i - 1), lastObjectCount[i - 1] * 10), cv::Point(intervalY*i, lastObjectCount[i] * 10), cv::Scalar(255, 255, 255), 2, 8, 0);
+		cv::line(out, cv::Point(intervalY*(i - 1), lastObjectCount[i - 1] * 10), cv::Point(intervalY*i, lastObjectCount[i] * 10), cv::Scalar(255, 255, 255), 8, 8, 0);
+
+		
 	}
+
+	for (int i = 0; i < height; i += intervalY)
+		cv::line(out, cv::Point(0, i), cv::Point(width, i), cv::Scalar(255, 255, 255));
+	for (int i = 0; i < width; i += intervalY)
+		cv::line(out, cv::Point(i, 0), cv::Point(i, height), cv::Scalar(255, 255, 255));
 
 	cv::imshow("ObjCount", out);
 
@@ -208,13 +223,19 @@ void connectAll(cv::Mat img, int objCount)
 	cv::Mat out(img);
 	auto pipVect = GetGraphSplitChannels(img);
 
+
+
 	for (cv::Mat mat : pipVect)
 	{
-		mat.copyTo(out(cv::Rect(10, 10, mat.cols, mat.rows)), mat);
+		cv::Mat tmp(mat.size()/2, CV_8UC3);
+		resize(mat, tmp, cv::Size(tmp.size()));
+		tmp.copyTo(out(cv::Rect(out.cols - tmp.cols, out.rows - tmp.rows, tmp.cols, tmp.rows)), tmp);
 	}
 
 	auto pip = GetGraphObjects(objCount);
-	pip.copyTo(out(cv::Rect(0, 0, pip.cols, pip.rows)), pip);
+	cv::Mat tmp(pip.size() / 2, CV_8UC3);
+	resize(pip, tmp, cv::Size(tmp.size()));
+	tmp.copyTo(out(cv::Rect(0, out.rows - tmp.rows, tmp.cols, tmp.rows)), tmp);
 
-	cv::imshow("effect", out);
+	imshow("effect", out);
 }

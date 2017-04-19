@@ -10,5 +10,6 @@ public:
 	Object noze;
 	Object face;
 
+	bool isSmile;
 	Face();
 };

@@ -48,6 +48,9 @@
     <ClInclude Include="vignetteCreation.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="classifiersClass.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -66,9 +69,12 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="vignetteCreation.cpp">
-		<Filter>Fichiers sources</Filter>
+      <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="faceClass.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="classifiersClass.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>

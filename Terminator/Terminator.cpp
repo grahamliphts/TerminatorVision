@@ -38,10 +38,10 @@ void draw(std::vector<Object> objectList, std::vector<Face> faceList, cv::Mat Gr
 	for each (Face curFace in faceList)
 	{
 		//rectangle(img, curFace.face.outterRect.br(), curFace.face.outterRect.tl(), cv::Scalar(0, 0, 0), 1, 8, 0); // Draw Face outter rect
-		/*
+		
 		rectangle(img, curFace.leftEye.outterRect.br(), curFace.leftEye.outterRect.tl(), cv::Scalar(0, 255, 0), 1, 8, 0); // Draw Left eye
 		rectangle(img, curFace.rightEye.outterRect.br(), curFace.rightEye.outterRect.tl(), cv::Scalar(0, 255, 0), 1, 8, 0); // Draw Right eye
-		if (curFace.isSmile)
+		/*if (curFace.isSmile)
 			rectangle(img, curFace.mouse.outterRect.br(), curFace.mouse.outterRect.tl(), cv::Scalar(0, 255, 255), 1, 8, 0); // Draw mouse
 		else
 			rectangle(img, curFace.mouse.outterRect.br(), curFace.mouse.outterRect.tl(), cv::Scalar(0, 0, 255), 1, 8, 0); // Draw mouse
@@ -134,7 +134,13 @@ void draw(std::vector<Object> objectList, std::vector<Face> faceList, cv::Mat Gr
 		rectangle(imgresult, blob.outterRect, cv::Scalar(255, 255, 255));
 	}
 
-	
+	//vignette.copyTo(imgresult(cv::Rect(10, 10, vignette.cols, vignette.rows)));
+
+	int fontFace = cv::FONT_HERSHEY_DUPLEX;
+	int fontScale = 1;
+	cv::putText(imgresult, "Name : ", cv::Point(20 + vignette.cols, 40), fontFace, fontScale, cv::Scalar::all(255), 1, CV_AA);
+	cv::putText(imgresult, "Age : ", cv::Point(20 + vignette.cols, 80), fontFace, fontScale, cv::Scalar::all(255), 1, CV_AA);
+
 	imshow("Terminator Vision", imgresult);
 	//int key2 = cv::waitKey(20);
 }
@@ -166,7 +172,7 @@ void update(cv::VideoCapture cameraStream)
 		objects = ObjectDetection(currentImg);
 		faces = FaceDetection(currentImg,&HaarManager);
 		//graph = GetGraph(currentImg);
-		//vignette = GetVignette(currentImg, faces);
+		vignette = GetVignette(currentImg, faces);
 		draw(objects, faces, graph, vignette, currentImg);
 	//	cv::waitKey(0);
 		if (cv::waitKey(30) >= 0)

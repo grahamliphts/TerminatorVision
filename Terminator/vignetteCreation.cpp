@@ -37,9 +37,9 @@ cv::Mat& GetVignette(cv::Mat& img, std::vector<Face>& faces)
 	cv::putText(img, "Name : ", cv::Point(20 + size.width, 40), fontFace, fontScale, cv::Scalar::all(255), 1, CV_AA);
 	cv::putText(img, "Age : ", cv::Point(20 + size.width, 80), fontFace, fontScale, cv::Scalar::all(255), 1, CV_AA);
 
-	cv::namedWindow("Final", 0);
-	cv::resizeWindow("Final", 680, 400);
-	cv::imshow("Final", img);
+	//cv::namedWindow("Final", 0);
+	//cv::resizeWindow("Final", 680, 400);
+	//cv::imshow("Final", img);
 
 	return vignetteDst;
 }

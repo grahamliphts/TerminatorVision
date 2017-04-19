@@ -19,19 +19,32 @@ std::vector<Face> FaceDetection(cv::Mat img, Classifiers* haarManager)
 	foundFacesFront = Getfaces(&haarManager->faceClassifier, img, MinFaceSize, img.cols);
 	if (foundFacesFront.size() > 0) {
 		for (int i = 0; i < foundFacesFront.size(); i++) {
-			center = (foundFacesFront[i].br() + foundFacesFront[i].tl())*0.5;
-			tempFace.face.outterRect = foundFacesFront[i];
-			tempFace.face.barycentre = point::point(center.x, center.y);
-			faceList.push_back(tempFace);
+			FaceShared = false;
+			for(int j=0; j < i; j++)
+			{
+				FaceShared = (((foundFacesFront[i] & foundFacesFront[j]).area()) > 0);
+			}
+			if (!FaceShared)
+			{
+				center = (foundFacesFront[i].br() + foundFacesFront[i].tl())*0.5;
+				tempFace.face.outterRect = foundFacesFront[i];
+				tempFace.face.barycentre = point::point(center.x, center.y);
+				faceList.push_back(tempFace);
+			}
 		}
 	}
 
 	foundFacesSide = Getfaces(&haarManager->faceSideClassifier, img, MinFaceSize, img.cols);
 	if (foundFacesSide.size() > 0) {
 		for (int i = 0; i < foundFacesSide.size(); i++) {
+			FaceShared = false;
 			for each (cv::Rect frontface in foundFacesFront)
 			{
-				FaceShared = (((foundFacesSide[0] & foundFacesSide[i]).area()) > 0);
+				FaceShared = (((foundFacesSide[i] & frontface).area()) > 0);
+			}
+			for (int j = 0; j < i; j++)
+			{
+				FaceShared = (((foundFacesSide[i] & foundFacesSide[j]).area()) > 0);
 			}
 			if (!FaceShared)
 			{

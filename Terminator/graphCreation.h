@@ -4,4 +4,6 @@
 cv::Mat GetGraph(cv::Mat img);
 std::vector<cv::Mat> GetGraphSplitChannels(cv::Mat img);
 
+cv::Mat RedPicture(cv::Mat img);
+
 cv::Mat GetGraphTesting(cv::Mat img);

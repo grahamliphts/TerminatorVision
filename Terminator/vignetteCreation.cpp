@@ -6,7 +6,7 @@
 CvRect zoom_area;
 int interpolation_type = CV_INTER_LINEAR;
 
-cv::Mat GetVignette(cv::Mat img, std::vector<Face> faces)
+cv::Mat& GetVignette(cv::Mat& img, std::vector<Face>& faces, cv::Mat& vignette)
 {
 	float zoom = 5;
 	IplImage iplimg = img;
@@ -37,18 +37,36 @@ cv::Mat GetVignette(cv::Mat img, std::vector<Face> faces)
 		cvCopy(&iplimg, zoomed, NULL);
 
 	cv::Mat zoomedMat = cv::cvarrToMat(zoomed);*/
+	cv::Mat subVignetteImg = img.clone();
+	subVignetteImg.setTo(cv::Scalar(0, 0, 0));
+
 	cv::Mat vignetteImg = img.clone();
-	vignetteImg.setTo(cv::Scalar(0, 0, 0));
+	vignetteImg.setTo(cv::Scalar(255, 255, 255));
 
 	if (faces.size() > 0)
+	{
 		vignetteImg = img(faces[0].face.outterRect);
+		if (faces[0].leftEye.outterRect.width > 0)
+		{
+			subVignetteImg = img(faces[0].leftEye.outterRect);
+		}
+	}
 
-	cv::Size size(100, 100);//the dst image size,e.g.100x100
-	cv::Mat dst;//src image
-	resize(vignetteImg, dst, size);//resize image
 
-	dst.copyTo(img(cv::Rect(10, 10, dst.cols, dst.rows)));
-	cv::imshow("cam2", img);
+	cv::Size size(150, 150);//the dst image size,e.g.100x100
+	cv::Mat vignetteDst;//src image
+	resize(vignetteImg, vignetteDst, size);//resize image
 
-	return img;
+	cv::Size subSize(50, 50);//the dst image size,e.g.100x100
+	cv::Mat subVignetteDst;//src image
+	resize(subVignetteImg, subVignetteDst, subSize);//resize image
+
+	subVignetteDst.copyTo(vignetteDst(cv::Rect(vignetteDst.rows - subSize.width, 0, subVignetteDst.cols, subVignetteDst.rows)));
+	vignetteDst.copyTo(img(cv::Rect(10, 10, vignetteDst.cols, vignetteDst.rows)));
+
+	cv::namedWindow("Final", 0);
+	cv::resizeWindow("Final", 680, 400);
+	cv::imshow("Final", img);
+
+	return vignetteDst;
 }

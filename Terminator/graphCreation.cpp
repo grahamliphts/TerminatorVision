@@ -153,6 +153,27 @@ std::vector<cv::Mat> GetGraphSplitChannels(cv::Mat img)
 	return { histImageB, histImageG, histImageR };
 }
 
+cv::Mat RedPicture(cv::Mat img)
+{
+	cv::Mat black(img.size(), CV_8UC1);
+	black.setTo(0);
+
+	//split
+	std::vector<cv::Mat> channels;
+	split(img, channels);
+
+	std::vector<cv::Mat> out_chan;
+	out_chan.push_back(black);
+	out_chan.push_back(black);
+	out_chan.push_back(channels[2]);
+	cv::Mat outR(img.size(), CV_8UC3);
+	merge(out_chan, outR);
+
+	imshow("R", outR);
+
+	return outR;
+}
+
 cv::Mat GetGraphTesting(cv::Mat img)
 {
 	//// Second test

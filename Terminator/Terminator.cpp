@@ -1,7 +1,9 @@
-// Terminator.cpp : définit le point d'entrée pour l'application console.
+// Terminator.cpp: definit le point d'entree pour l'application console.
 //
 
 #include "terminator.h"
+
+std::vector<int> lastObjectCount;
 
 int main()
 {

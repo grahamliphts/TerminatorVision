@@ -37,6 +37,7 @@ void draw(std::vector<Object> objectList, std::vector<Face> faceList, cv::Mat Gr
 	for each (Face curFace in faceList)
 	{
 		//rectangle(img, curFace.face.outterRect.br(), curFace.face.outterRect.tl(), cv::Scalar(0, 0, 0), 1, 8, 0); // Draw Face outter rect
+		/*
 		rectangle(img, curFace.leftEye.outterRect.br(), curFace.leftEye.outterRect.tl(), cv::Scalar(0, 255, 0), 1, 8, 0); // Draw Left eye
 		rectangle(img, curFace.rightEye.outterRect.br(), curFace.rightEye.outterRect.tl(), cv::Scalar(0, 255, 0), 1, 8, 0); // Draw Right eye
 		if (curFace.isSmile)
@@ -44,48 +45,55 @@ void draw(std::vector<Object> objectList, std::vector<Face> faceList, cv::Mat Gr
 		else
 			rectangle(img, curFace.mouse.outterRect.br(), curFace.mouse.outterRect.tl(), cv::Scalar(0, 0, 255), 1, 8, 0); // Draw mouse
 		rectangle(img, curFace.noze.outterRect.br(), curFace.noze.outterRect.tl(), cv::Scalar(255, 0, 255), 1, 8, 0); // Draw mouse
+		*/
 
 	}
-
+	bool draw = true;
 	for (int i = 0; i < objectList.size(); i++)
 	{
+		draw = true;
 		Object blob = objectList[i];
 		if (blob.outterRect.x > 0 && blob.outterRect.y > 0 && blob.outterRect.x + blob.outterRect.width < img.cols && blob.outterRect.y + blob.outterRect.height < img.rows)
 		{
 			for each (Face face in faceList)
 			{
-
+				draw = (((blob.outterRect & face.face.outterRect).area()) > 0);
+				draw = !draw;
+;
 			}
-			cv::Mat subImage(img, cv::Rect(blob.outterRect.x, blob.outterRect.y, blob.outterRect.width, blob.outterRect.height));
-			cv::Mat subImageGray(subImage);
-			cv::GaussianBlur(subImageGray, subImageGray, cv::Size(3, 3), 0, 0, cv::BORDER_DEFAULT);
+			if (draw)
+			{
+				cv::Mat subImage(img, cv::Rect(blob.outterRect.x, blob.outterRect.y, blob.outterRect.width, blob.outterRect.height));
+				cv::Mat subImageGray(subImage);
+				cv::GaussianBlur(subImageGray, subImageGray, cv::Size(3, 3), 0, 0, cv::BORDER_DEFAULT);
 
-			/// Convert it to gray
-			cvtColor(subImageGray, subImageGray, cv::COLOR_RGB2GRAY);
+				/// Convert it to gray
+				cvtColor(subImageGray, subImageGray, cv::COLOR_RGB2GRAY);
 
-			/// Generate grad_x and grad_y
-			cv::Mat grad;
-			cv::Mat grad_x, grad_y;
-			cv::Mat abs_grad_x, abs_grad_y;
+				/// Generate grad_x and grad_y
+				cv::Mat grad;
+				cv::Mat grad_x, grad_y;
+				cv::Mat abs_grad_x, abs_grad_y;
 
-			int scale = 2;
-			int delta = 0;
-			int ddepth = CV_16S;
+				int scale = 2;
+				int delta = 0;
+				int ddepth = CV_16S;
 
-			Sobel(subImageGray, grad_x, ddepth, 1, 0, 3, scale, delta, cv::BORDER_DEFAULT);
-			convertScaleAbs(grad_x, abs_grad_x);
+				Sobel(subImageGray, grad_x, ddepth, 1, 0, 3, scale, delta, cv::BORDER_DEFAULT);
+				convertScaleAbs(grad_x, abs_grad_x);
 
-			Sobel(subImageGray, grad_y, ddepth, 0, 1, 3, scale, delta, cv::BORDER_DEFAULT);
-			convertScaleAbs(grad_y, abs_grad_y);
+				Sobel(subImageGray, grad_y, ddepth, 0, 1, 3, scale, delta, cv::BORDER_DEFAULT);
+				convertScaleAbs(grad_y, abs_grad_y);
 
-			addWeighted(abs_grad_x, 0.5, abs_grad_y, 0.5, 0, grad);
+				addWeighted(abs_grad_x, 0.5, abs_grad_y, 0.5, 0, grad);
 
-			cv::Mat dst;
-			cv::Mat rgba[4] = { grad,grad,grad,grad };
-			merge(rgba, 4, dst);
+				cv::Mat dst;
+				cv::Mat rgba[4] = { grad,grad,grad,grad };
+				merge(rgba, 4, dst);
 
-			img = OverlayImage(img, dst, cv::Point(blob.outterRect.x, blob.outterRect.y));
-			rectangle(img, blob.outterRect, cv::Scalar(255, 255, 255));
+				img = OverlayImage(img, dst, cv::Point(blob.outterRect.x, blob.outterRect.y));
+				rectangle(img, blob.outterRect, cv::Scalar(255, 255, 255));
+			}
 		}
 	}
 
@@ -126,7 +134,7 @@ void draw(std::vector<Object> objectList, std::vector<Face> faceList, cv::Mat Gr
 	}
 
 	
-	imshow("FaceDetected", img);
+	imshow("Terminator Vision", img);
 	//int key2 = cv::waitKey(20);
 }
 
@@ -150,7 +158,7 @@ void update(cv::VideoCapture cameraStream)
 
 	while(true){
 		cameraStream.read(currentImg);
-		currentImg = cv::imread("john-cena.jpg", CV_LOAD_IMAGE_COLOR);
+		//currentImg = cv::imread("john-cena.jpg", CV_LOAD_IMAGE_COLOR);
 		//currentImg = cv::imread("Terminator_metal.jpg", CV_LOAD_IMAGE_COLOR);
 		//imshow("cam", currentImg);
 

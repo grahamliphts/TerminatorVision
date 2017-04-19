@@ -1,7 +1,7 @@
 #include "graphCreation.h"
 #include <opencv2/highgui/highgui.hpp>
 
-cv::Mat GetGraph(cv::Mat img)
+cv::Mat GetGraph(cv::Mat img, int step)
 {
 	/// Separate the image in 3 places ( B, G and R )
 	std::vector<cv::Mat> bgr_planes;
@@ -37,47 +37,47 @@ cv::Mat GetGraph(cv::Mat img)
 	normalize(r_hist, r_hist, 0, histImage.rows, cv::NORM_MINMAX, -1, cv::Mat());
 
 	/// Draw for each channel
-	for (int i = 1; i < histSize; i++)
+	for (int i = step; i < histSize; i += step)
 	{
 		//create rectangles
-		auto pt1 = cv::Point(bin_w * (i - 1), hist_h);
+		auto pt1 = cv::Point(bin_w * (i - step), hist_h);
 		auto pt2 = cv::Point(bin_w * i, hist_h);
 
 		auto pt3 = cv::Point(bin_w * i, hist_h - cvRound(b_hist.at<float>(i)));
-		auto pt4 = cv::Point(bin_w * (i - 1), hist_h - cvRound(b_hist.at<float>(i - 1)));
+		auto pt4 = cv::Point(bin_w * (i - step), hist_h - cvRound(b_hist.at<float>(i - step)));
 		cv::Point ptsB[] = { pt1, pt2, pt3, pt4, pt1 };
 		fillConvexPoly(histImage, ptsB, 5, cv::Scalar(255, 0, 0));
 
 		pt3 = cv::Point(bin_w * i, hist_h - cvRound(g_hist.at<float>(i)));
-		pt4 = cv::Point(bin_w * (i - 1), hist_h - cvRound(g_hist.at<float>(i - 1)));
+		pt4 = cv::Point(bin_w * (i - step), hist_h - cvRound(g_hist.at<float>(i - step)));
 		cv::Point ptsG[] = { pt1, pt2, pt3, pt4, pt1 };
 		fillConvexPoly(histImage, ptsG, 5, cv::Scalar(0, 255, 0));
 
 		pt3 = cv::Point(bin_w * i, hist_h - cvRound(r_hist.at<float>(i)));
-		pt4 = cv::Point(bin_w * (i - 1), hist_h - cvRound(r_hist.at<float>(i - 1)));
+		pt4 = cv::Point(bin_w * (i - step), hist_h - cvRound(r_hist.at<float>(i - step)));
 		cv::Point ptsR[] = { pt1, pt2, pt3, pt4, pt1 };
 		fillConvexPoly(histImage, ptsR, 5, cv::Scalar(0, 0, 255));
 
 		//create lines
-		line(histImage, cv::Point(bin_w*(i - 1), hist_h - cvRound(b_hist.at<float>(i - 1))),
+		line(histImage, cv::Point(bin_w*(i - step), hist_h - cvRound(b_hist.at<float>(i - step))),
 			cv::Point(bin_w*(i), hist_h - cvRound(b_hist.at<float>(i))),
 			cv::Scalar(255, 125, 0), 2, 8, 0);
-		line(histImage, cv::Point(bin_w*(i - 1), hist_h - cvRound(g_hist.at<float>(i - 1))),
+		line(histImage, cv::Point(bin_w*(i - step), hist_h - cvRound(g_hist.at<float>(i - step))),
 			cv::Point(bin_w*(i), hist_h - cvRound(g_hist.at<float>(i))),
 			cv::Scalar(125, 255, 0), 2, 8, 0);
-		line(histImage, cv::Point(bin_w*(i - 1), hist_h - cvRound(r_hist.at<float>(i - 1))),
+		line(histImage, cv::Point(bin_w*(i - step), hist_h - cvRound(r_hist.at<float>(i - step))),
 			cv::Point(bin_w*(i), hist_h - cvRound(r_hist.at<float>(i))),
 			cv::Scalar(0, 125, 255), 2, 8, 0);
 	}
 
 	/// Display
 	//cv::namedWindow("Graph", CV_WINDOW_NORMAL);
-	//imshow("Graph", histImage);
-	
+	imshow("Graph", histImage);
+
 	return histImage;
 }
 
-std::vector<cv::Mat> GetGraphSplitChannels(cv::Mat img)
+std::vector<cv::Mat> GetGraphSplitChannels(cv::Mat img, int step)
 {
 	/// Separate the image in 3 places ( B, G and R )
 	std::vector<cv::Mat> bgr_planes;
@@ -115,35 +115,35 @@ std::vector<cv::Mat> GetGraphSplitChannels(cv::Mat img)
 	normalize(r_hist, r_hist, 0, histImageR.rows, cv::NORM_MINMAX, -1, cv::Mat());
 
 	/// Draw for each channel
-	for (int i = 1; i < histSize; i++)
+	for (int i = step; i < histSize; i += step)
 	{
 		//create rectangles
-		auto pt1 = cv::Point(bin_w * (i - 1), hist_h);
+		auto pt1 = cv::Point(bin_w * (i - step), hist_h);
 		auto pt2 = cv::Point(bin_w * i, hist_h);
 
 		auto pt3 = cv::Point(bin_w * i, hist_h - cvRound(b_hist.at<float>(i)));
-		auto pt4 = cv::Point(bin_w * (i - 1), hist_h - cvRound(b_hist.at<float>(i - 1)));
+		auto pt4 = cv::Point(bin_w * (i - step), hist_h - cvRound(b_hist.at<float>(i - step)));
 		cv::Point ptsB[] = { pt1, pt2, pt3, pt4, pt1 };
 		fillConvexPoly(histImageB, ptsB, 5, cv::Scalar(255, 0, 0));
 
 		pt3 = cv::Point(bin_w * i, hist_h - cvRound(g_hist.at<float>(i)));
-		pt4 = cv::Point(bin_w * (i - 1), hist_h - cvRound(g_hist.at<float>(i - 1)));
+		pt4 = cv::Point(bin_w * (i - step), hist_h - cvRound(g_hist.at<float>(i - step)));
 		cv::Point ptsG[] = { pt1, pt2, pt3, pt4, pt1 };
 		fillConvexPoly(histImageG, ptsG, 5, cv::Scalar(0, 255, 0));
 
 		pt3 = cv::Point(bin_w * i, hist_h - cvRound(r_hist.at<float>(i)));
-		pt4 = cv::Point(bin_w * (i - 1), hist_h - cvRound(r_hist.at<float>(i - 1)));
+		pt4 = cv::Point(bin_w * (i - step), hist_h - cvRound(r_hist.at<float>(i - step)));
 		cv::Point ptsR[] = { pt1, pt2, pt3, pt4, pt1 };
 		fillConvexPoly(histImageR, ptsR, 5, cv::Scalar(0, 0, 255));
 
 		//create lines
-		line(histImageB, cv::Point(bin_w*(i - 1), hist_h - cvRound(b_hist.at<float>(i - 1))),
+		line(histImageB, cv::Point(bin_w*(i - step), hist_h - cvRound(b_hist.at<float>(i - step))),
 			cv::Point(bin_w*(i), hist_h - cvRound(b_hist.at<float>(i))),
 			cv::Scalar(255, 125, 0), 2, 8, 0);
-		line(histImageG, cv::Point(bin_w*(i - 1), hist_h - cvRound(g_hist.at<float>(i - 1))),
+		line(histImageG, cv::Point(bin_w*(i - step), hist_h - cvRound(g_hist.at<float>(i - step))),
 			cv::Point(bin_w*(i), hist_h - cvRound(g_hist.at<float>(i))),
 			cv::Scalar(125, 255, 0), 2, 8, 0);
-		line(histImageR, cv::Point(bin_w*(i - 1), hist_h - cvRound(r_hist.at<float>(i - 1))),
+		line(histImageR, cv::Point(bin_w*(i - step), hist_h - cvRound(r_hist.at<float>(i - step))),
 			cv::Point(bin_w*(i), hist_h - cvRound(r_hist.at<float>(i))),
 			cv::Scalar(0, 125, 255), 2, 8, 0);
 	}
@@ -174,49 +174,23 @@ cv::Mat RedPicture(cv::Mat img)
 	return outR;
 }
 
-cv::Mat GetGraphTesting(cv::Mat img)
+cv::Mat GetGraphObjects(cv::Mat img, int objCount)
 {
-	//// Second test
-	cv::Mat hsv;
-	cv::cvtColor(img, hsv, CV_BGR2HSV);
+	cv::Mat out(img.size(), CV_8UC4);
+	out.setTo(0);
 
-	// Quantize the hue to 30 levels
-	// and the saturation to 32 levels
-	int hbins = 30, sbins = 32;
-	int histSize2[] = { hbins, sbins };
-	// hue varies from 0 to 179, see cvtColor
-	float hranges[] = { 0, 180 };
-	// saturation varies from 0 (black-gray-white) to
-	// 255 (pure spectrum color)
-	float sranges[] = { 0, 256 };
-	const float* ranges[] = { hranges, sranges };
-	cv::MatND hist;
-	// we compute the histogram from the 0-th and 1-st channels
-	int channels[] = { 0, 1 };
+	if (lastObjectCount.size() == 10)
+		lastObjectCount.erase(lastObjectCount.begin());
 
-	calcHist(&hsv, 1, channels, cv::Mat(), // do not use mask
-		hist, 2, histSize2, ranges,
-		true, // the histogram is uniform
-		false);
-	double maxVal = 0;
-	minMaxLoc(hist, 0, &maxVal, 0, 0);
+	lastObjectCount.push_back(objCount);
+	int intervalY = out.size().width / 10;
 
-	int scale = 10;
-	cv::Mat histImg = cv::Mat::zeros(sbins*scale, hbins * 10, CV_8UC4);
+	for (int i = 1; i< lastObjectCount.size(); ++i)
+	{
+		cv::line(out, cv::Point(intervalY*(i - 1), lastObjectCount[i - 1] * 10), cv::Point(intervalY*i, lastObjectCount[i] * 10), cv::Scalar(0, 255, 255), 2, 8, 0);
+	}
 
-	for (int h = 0; h < hbins; h++)
-		for (int s = 0; s < sbins; s++)
-		{
-			float binVal = hist.at<float>(h, s);
-			int intensity = cvRound(binVal * 255 / maxVal);
-			rectangle(histImg, cv::Point(h*scale, s*scale),
-			          cv::Point((h + 1)*scale - 1, (s + 1)*scale - 1),
-			          cv::Scalar::all(intensity),
-				CV_FILLED);
-		}
+	cv::imshow("ObjCount", out);
 
-	cv::namedWindow("H-S Histogram", 1);
-	imshow("H-S Histogram", histImg);
-
-	return histImg;
+	return out;
 }

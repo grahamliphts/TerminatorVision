@@ -74,15 +74,14 @@ std::vector<Object> ObjectDetection(cv::Mat img)
 		
 		listBlob.push_back(blob);
 	}
-
-	imshow("treshold_image", treshold_image);
+	//imshow("treshold_image", treshold_image);
 
 	Mat im_with_keypoints;
 	drawKeypoints(img, keypoints, im_with_keypoints, Scalar(0, 0, 255), DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
-	imshow("keypoints", im_with_keypoints);
+	//imshow("keypoints", im_with_keypoints);
 
 	ShowObject(img, listBlob);
-	waitKey();
+	//waitKey();
 
 	return listBlob;
 }
@@ -132,38 +131,41 @@ void ShowObject(cv::Mat img, std::vector<Object> objects)
 	for (int i = 0; i < objects.size(); i++)
 	{
 		Object blob = objects[i];
+		if (blob.outterRect.x > 0 && blob.outterRect.y > 0 && blob.outterRect.x + blob.outterRect.width < img.cols && blob.outterRect.y + blob.outterRect.height < img.rows)
+		{
+			Mat subImage(img, cv::Rect(blob.outterRect.x, blob.outterRect.y, blob.outterRect.width, blob.outterRect.height));
+			Mat subImageGray(subImage);
+			GaussianBlur(subImageGray, subImageGray, Size(3, 3), 0, 0, BORDER_DEFAULT);
 
-		Mat subImage(img, cv::Rect(blob.outterRect.x, blob.outterRect.y, blob.outterRect.width, blob.outterRect.height));
-		Mat subImageGray(subImage);
-		GaussianBlur(subImageGray, subImageGray, Size(3, 3), 0, 0, BORDER_DEFAULT);
+			/// Convert it to gray
+			cvtColor(subImageGray, subImageGray, COLOR_RGB2GRAY);
 
-		/// Convert it to gray
-		cvtColor(subImageGray, subImageGray, COLOR_RGB2GRAY);
+			/// Generate grad_x and grad_y
+			Mat grad;
+			Mat grad_x, grad_y;
+			Mat abs_grad_x, abs_grad_y;
 
-		/// Generate grad_x and grad_y
-		Mat grad;
-		Mat grad_x, grad_y;
-		Mat abs_grad_x, abs_grad_y;
+			int scale = 2;
+			int delta = 0;
+			int ddepth = CV_16S;
 
-		int scale = 2;
-		int delta = 0;
-		int ddepth = CV_16S;
+			Sobel(subImageGray, grad_x, ddepth, 1, 0, 3, scale, delta, BORDER_DEFAULT);
+			convertScaleAbs(grad_x, abs_grad_x);
 
-		Sobel(subImageGray, grad_x, ddepth, 1, 0, 3, scale, delta, BORDER_DEFAULT);
-		convertScaleAbs(grad_x, abs_grad_x);
+			Sobel(subImageGray, grad_y, ddepth, 0, 1, 3, scale, delta, BORDER_DEFAULT);
+			convertScaleAbs(grad_y, abs_grad_y);
 
-		Sobel(subImageGray, grad_y, ddepth, 0, 1, 3, scale, delta, BORDER_DEFAULT);
-		convertScaleAbs(grad_y, abs_grad_y);
+			addWeighted(abs_grad_x, 0.5, abs_grad_y, 0.5, 0, grad);
 
-		addWeighted(abs_grad_x, 0.5, abs_grad_y, 0.5, 0, grad);
+			Mat dst;
+			Mat rgba[4] = { grad,grad,grad,grad };
+			merge(rgba, 4, dst);
 
-		Mat dst;
-		Mat rgba[4] = { grad,grad,grad,grad };
-		merge(rgba, 4, dst);
-
-		imgResult = OverlayImage(imgResult, dst, Point(blob.outterRect.x, blob.outterRect.y));
-		rectangle(imgResult, blob.outterRect, Scalar(255, 255, 255));
+			imgResult = OverlayImage(imgResult, dst, Point(blob.outterRect.x, blob.outterRect.y));
+			//(imgResult, blob.outterRect, Scalar(255, 255, 255));
+		}
 	}
+
 
 	imshow("imgResult", imgResult);
 }

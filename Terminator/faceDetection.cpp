@@ -162,23 +162,6 @@ std::vector<Face> FaceDetection(cv::Mat img, Classifiers* haarManager)
 	}
 
 
-	//Show the results
-	for each (Face curFace in faceList)
-	{
-		rectangle(img, curFace.face.outterRect.br(), curFace.face.outterRect.tl(), cv::Scalar(0, 0, 0), 1, 8, 0); // Draw Face outter rect
-		rectangle(img, curFace.leftEye.outterRect.br(), curFace.leftEye.outterRect.tl(), cv::Scalar(0, 255, 0), 1, 8, 0); // Draw Left eye
-		rectangle(img, curFace.rightEye.outterRect.br(), curFace.rightEye.outterRect.tl(), cv::Scalar(0, 255, 0), 1, 8, 0); // Draw Right eye
-		if (curFace.isSmile)
-			rectangle(img, curFace.mouse.outterRect.br(), curFace.mouse.outterRect.tl(), cv::Scalar(0, 255, 255), 1, 8, 0); // Draw mouse
-		else
-			rectangle(img, curFace.mouse.outterRect.br(), curFace.mouse.outterRect.tl(), cv::Scalar(0, 0, 255), 1, 8, 0); // Draw mouse
-		rectangle(img, curFace.noze.outterRect.br(), curFace.noze.outterRect.tl(), cv::Scalar(255, 0, 255), 1, 8, 0); // Draw mouse
-
-	}
-
-
-	imshow("FaceDetected", img);
-	int key2 = cv::waitKey(20);
 
 	return faceList;
 }

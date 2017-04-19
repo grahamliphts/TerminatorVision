@@ -14,4 +14,4 @@
 #include "classifiersClass.h"
 
 void update(cv::VideoCapture);
-void draw(std::vector<Object> , std::vector<Face> , cv::Mat ,cv::Mat*);
+void draw(std::vector<Object> , std::vector<Face> , cv::Mat,cv::Mat ,cv::Mat);

@@ -9,7 +9,7 @@
 #include "pointClass.h"
 #include "classifiersClass.h"
 #include <ostream>
-#include <iostream>;
+#include <iostream>
 
 std::vector<Face> FaceDetection(cv::Mat,Classifiers*);
 std::vector<cv::Rect> Getfaces(cv::CascadeClassifier*,cv::Mat,int,int);

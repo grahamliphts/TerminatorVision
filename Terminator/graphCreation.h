@@ -6,4 +6,5 @@ std::vector<cv::Mat> GetGraphSplitChannels(cv::Mat img, int step = 8);
 
 cv::Mat RedPicture(cv::Mat img);
 
-cv::Mat GetGraphTesting(cv::Mat img, int step = 8);
+extern std::vector<int> lastObjectCount;
+cv::Mat GetGraphObjects(cv::Mat img, int objCount);

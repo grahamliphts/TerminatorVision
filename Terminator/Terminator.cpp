@@ -27,11 +27,12 @@ int main()
 void draw(std::vector<Object> objectList, std::vector<Face> faceList, cv::Mat Graph,cv::Mat vignette, cv::Mat img)
 {
 	//using namespace cv;
+	cv::Mat imgresult;
 	cv::Mat rgb[3];
 	split(img, rgb);
 
 	cv::Mat rgbaImg[4] = { cv::Mat(img.size(),CV_8UC1,cv::Scalar(0)),cv::Mat(img.size(),CV_8UC1,cv::Scalar(0)),rgb[2],cv::Mat(img.size(),CV_8UC1,cv::Scalar(1)) };
-	merge(rgbaImg, 4, img);
+	merge(rgbaImg, 4, imgresult);
 
 	
 	for each (Face curFace in faceList)
@@ -91,8 +92,8 @@ void draw(std::vector<Object> objectList, std::vector<Face> faceList, cv::Mat Gr
 				cv::Mat rgba[4] = { grad,grad,grad,grad };
 				merge(rgba, 4, dst);
 
-				img = OverlayImage(img, dst, cv::Point(blob.outterRect.x, blob.outterRect.y));
-				rectangle(img, blob.outterRect, cv::Scalar(255, 255, 255));
+				imgresult = OverlayImage(imgresult, dst, cv::Point(blob.outterRect.x, blob.outterRect.y));
+				rectangle(imgresult, blob.outterRect, cv::Scalar(255, 255, 255));
 			}
 		}
 	}
@@ -129,12 +130,12 @@ void draw(std::vector<Object> objectList, std::vector<Face> faceList, cv::Mat Gr
 		cv::Mat rgba[4] = { grad,grad,grad,grad };
 		merge(rgba, 4, dst);
 
-		img = OverlayImage(img, dst, cv::Point(blob.outterRect.x, blob.outterRect.y));
-		rectangle(img, blob.outterRect, cv::Scalar(255, 255, 255));
+		imgresult = OverlayImage(imgresult, dst, cv::Point(blob.outterRect.x, blob.outterRect.y));
+		rectangle(imgresult, blob.outterRect, cv::Scalar(255, 255, 255));
 	}
 
 	
-	imshow("Terminator Vision", img);
+	imshow("Terminator Vision", imgresult);
 	//int key2 = cv::waitKey(20);
 }
 

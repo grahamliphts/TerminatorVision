@@ -48,11 +48,11 @@ std::vector<Object> ObjectDetection(cv::Mat img)
 
 	//cvtColor(img, gray_image, CV_BGR2GRAY);
 	cvtColor(img, gray_image, COLOR_RGB2GRAY);
-	threshold(gray_image, treshold_black_image, 65, 255, ThresholdTypes::THRESH_BINARY);
+	threshold(gray_image, treshold_black_image, 100, 255, ThresholdTypes::THRESH_BINARY);
 	GaussianBlur(treshold_black_image, treshold_black_image, Size(9, 9), 0, 0, BORDER_DEFAULT);
 	threshold(treshold_black_image, treshold_black_image, 20, 255, ThresholdTypes::THRESH_BINARY);
 
-	threshold(gray_image, treshold_white_image, 180, 255, ThresholdTypes::THRESH_BINARY_INV);
+	threshold(gray_image, treshold_white_image, 100, 255, ThresholdTypes::THRESH_BINARY_INV);
 	GaussianBlur(treshold_white_image, treshold_white_image, Size(9, 9), 0, 0, BORDER_DEFAULT);
 	threshold(treshold_white_image, treshold_white_image, 10, 255, ThresholdTypes::THRESH_BINARY);
 
@@ -74,7 +74,7 @@ std::vector<Object> ObjectDetection(cv::Mat img)
 		
 		listBlob.push_back(blob);
 	}
-	//imshow("treshold_image", treshold_image);
+	imshow("treshold_image", treshold_image);
 
 	Mat im_with_keypoints;
 	drawKeypoints(img, keypoints, im_with_keypoints, Scalar(0, 0, 255), DrawMatchesFlags::DRAW_RICH_KEYPOINTS);

@@ -156,6 +156,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="classifiersClass.h" />
     <ClInclude Include="faceClass.h" />
     <ClInclude Include="faceDetection.h" />
     <ClInclude Include="graphCreation.h" />
@@ -168,6 +169,7 @@
     <ClInclude Include="vignetteCreation.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="classifiersClass.cpp" />
     <ClCompile Include="faceClass.cpp" />
     <ClCompile Include="faceDetection.cpp" />
     <ClCompile Include="graphCreation.cpp" />

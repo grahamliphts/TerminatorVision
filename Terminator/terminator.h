@@ -11,6 +11,7 @@
 #include "faceDetection.h"
 #include "graphCreation.h"
 #include "vignetteCreation.h"
+#include "classifiersClass.h"
 
 void update(cv::VideoCapture);
 void draw(std::vector<Object> , std::vector<Face> , cv::Mat ,cv::Mat*);

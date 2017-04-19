@@ -7,9 +7,13 @@
 #include <opencv2/objdetect.hpp>
 #include "faceClass.h"
 #include "pointClass.h"
+#include "classifiersClass.h"
 #include <ostream>
 #include <iostream>;
 
-std::vector<Face> FaceDetection(cv::Mat);
-std::vector<cv::Rect> Getfaces(std::string,cv::Mat,int,int);
-std::vector<cv::Rect> GetEyes(std::string, cv::Mat, int, int);
+std::vector<Face> FaceDetection(cv::Mat,Classifiers*);
+std::vector<cv::Rect> Getfaces(cv::CascadeClassifier*,cv::Mat,int,int);
+std::vector<cv::Rect> GetEyes(cv::CascadeClassifier*, cv::Mat, int, int);
+std::vector<cv::Rect> GetMouth(cv::CascadeClassifier*, cv::Mat, int, int);
+std::vector<cv::Rect> GetSmile(cv::CascadeClassifier*, cv::Mat img, int minSize, int maxSize);
+std::vector<cv::Rect> GetNoze(cv::CascadeClassifier*, cv::Mat img, int minSize, int maxSize);

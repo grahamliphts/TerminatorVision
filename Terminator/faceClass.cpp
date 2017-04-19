@@ -2,4 +2,5 @@
 
 Face::Face()
 {
+	isSmile = false;
 }

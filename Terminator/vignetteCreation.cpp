@@ -6,7 +6,7 @@
 CvRect zoom_area;
 int interpolation_type = CV_INTER_LINEAR;
 
-cv::Mat& GetVignette(cv::Mat& img, std::vector<Face>& faces)
+cv::Mat GetVignette(cv::Mat& img, std::vector<Face>& faces)
 {
 	cv::Mat subVignetteImg = img.clone();
 	subVignetteImg.setTo(cv::Scalar(0, 0, 0));

@@ -100,7 +100,7 @@ std::vector<Face> FaceDetection(cv::Mat img)
 	imshow("FaceDetected", img);
 	int key2 = cv::waitKey(20);
 
-	return std::vector<Face>();
+	return faceList;
 }
 
 std::vector<cv::Rect> Getfaces(std::string HaarCascade,cv::Mat img,int minSize, int maxSize)

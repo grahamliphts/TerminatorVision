@@ -24,7 +24,7 @@ int main()
 	return 0;
 }
 
-void draw(std::vector<Object> objectList, std::vector<Face> faceList, cv::Mat Graph,cv::Mat vignette, cv::Mat img)
+void draw(std::vector<Object> objectList, std::vector<Face> faceList, cv::Mat Graph, Vignette &vignetteManager, cv::Mat img)
 {
 	//using namespace cv;
 	cv::Mat imgresult;
@@ -138,8 +138,8 @@ void draw(std::vector<Object> objectList, std::vector<Face> faceList, cv::Mat Gr
 
 	int fontFace = cv::FONT_HERSHEY_DUPLEX;
 	int fontScale = 1;
-	cv::putText(imgresult, "Name : ", cv::Point(20 + vignette.cols, 40), fontFace, fontScale, cv::Scalar::all(255), 1, CV_AA);
-	cv::putText(imgresult, "Age : ", cv::Point(20 + vignette.cols, 80), fontFace, fontScale, cv::Scalar::all(255), 1, CV_AA);
+	cv::putText(imgresult, "Name : ", cv::Point(20 + vignetteManager.size, 40), fontFace, fontScale, cv::Scalar::all(255), 1, CV_AA);
+	cv::putText(imgresult, "Age : ", cv::Point(20 + vignetteManager.size, 80), fontFace, fontScale, cv::Scalar::all(255), 1, CV_AA);
 
 	imshow("Terminator Vision", imgresult);
 	//int key2 = cv::waitKey(20);
@@ -151,7 +151,6 @@ void update(cv::VideoCapture cameraStream)
 	std::vector<Object> objects;
 	std::vector<Face> faces;
 	cv::Mat graph;
-	cv::Mat vignette;
 
 	cv::Mat cameraFrame;
 	Classifiers HaarManager("HaarCascade/haarcascade_eye.xml",
@@ -162,6 +161,9 @@ void update(cv::VideoCapture cameraStream)
 		"HaarCascade/haarcascade_profileface.xml",
 		"HaarCascade/haarcascade_smile.xml");
 
+	//extract img to create first vignette
+	cameraStream.read(currentImg);
+	Vignette vignetteManager(currentImg);
 
 	while(true){
 		cameraStream.read(currentImg);
@@ -172,8 +174,8 @@ void update(cv::VideoCapture cameraStream)
 		objects = ObjectDetection(currentImg);
 		faces = FaceDetection(currentImg,&HaarManager);
 		//graph = GetGraph(currentImg);
-		vignette = GetVignette(currentImg, faces);
-		draw(objects, faces, graph, vignette, currentImg);
+		vignetteManager.Process(currentImg, faces);
+		draw(objects, faces, graph, vignetteManager, currentImg);
 	//	cv::waitKey(0);
 		if (cv::waitKey(30) >= 0)
 			break;

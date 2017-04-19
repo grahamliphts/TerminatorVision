@@ -3,43 +3,55 @@
 #include "opencv2\core\core.hpp"
 #include "opencv2\highgui\highgui.hpp"
 #include "opencv2\imgproc\imgproc.hpp"
-CvRect zoom_area;
-int interpolation_type = CV_INTER_LINEAR;
 
-cv::Mat GetVignette(cv::Mat& img, std::vector<Face>& faces)
+Vignette::Vignette(cv::Mat& img)
 {
-	cv::Mat subVignetteImg = img.clone();
-	subVignetteImg.setTo(cv::Scalar(0, 0, 0));
+	size = 150;
+	subSize = 50;
 
-	cv::Mat vignetteImg = img.clone();
-	vignetteImg.setTo(cv::Scalar(255, 255, 255));
+	currentFaceVignette = img.clone();
+	currentFaceVignette.setTo(cv::Scalar(0, 0, 0));
 
+	currentEyeVignette = img.clone();
+	currentEyeVignette.setTo(cv::Scalar(255, 255, 255));
+
+	resize(currentFaceVignette, currentFaceVignette, cv::Size(size, size));
+	resize(currentEyeVignette, currentEyeVignette, cv::Size(subSize, subSize));
+
+	currentEyeVignette.copyTo(currentFaceVignette(cv::Rect(currentFaceVignette.rows - subSize, 0, currentEyeVignette.cols, currentEyeVignette.rows)));
+	currentFaceVignette.copyTo(img(cv::Rect(10, 10, currentFaceVignette.cols, currentFaceVignette.rows)));
+}
+
+cv::Mat Vignette::Process(cv::Mat& img, std::vector<Face>& faces)
+{
+	bool detectFace = false;
 	if (faces.size() > 0)
+		detectFace = true;
+
+	if (detectFace)
 	{
-		vignetteImg = img(faces[0].face.outterRect);
+		currentFaceVignette = img.clone();
+		currentFaceVignette.setTo(cv::Scalar(0, 0, 0));
+
+		currentFaceVignette = img(faces[0].face.outterRect);
+		resize(currentFaceVignette, currentFaceVignette, cv::Size(size, size));
+
 		if (faces[0].leftEye.outterRect.width > 0)
-			subVignetteImg = img(faces[0].leftEye.outterRect);
+		{
+			currentEyeVignette = img.clone();
+			currentEyeVignette.setTo(cv::Scalar(255, 255, 255));
+
+			currentEyeVignette = img(faces[0].leftEye.outterRect);
+			resize(currentEyeVignette, currentEyeVignette, cv::Size(subSize, subSize));
+			currentEyeVignette.copyTo(currentFaceVignette(cv::Rect(currentFaceVignette.rows - subSize, 0, currentEyeVignette.cols, currentEyeVignette.rows)));
+		}
+		currentEyeVignette.copyTo(currentFaceVignette(cv::Rect(currentFaceVignette.rows - subSize, 0, currentEyeVignette.cols, currentEyeVignette.rows)));
+		currentFaceVignette.copyTo(img(cv::Rect(10, 10, currentFaceVignette.cols, currentFaceVignette.rows)));
 	}
-
-	cv::Size size(150, 150);
-	cv::Mat vignetteDst;
-	resize(vignetteImg, vignetteDst, size);
-
-	cv::Size subSize(50, 50);
-	cv::Mat subVignetteDst;
-	resize(subVignetteImg, subVignetteDst, subSize);
-
-	subVignetteDst.copyTo(vignetteDst(cv::Rect(vignetteDst.rows - subSize.width, 0, subVignetteDst.cols, subVignetteDst.rows)));
-	vignetteDst.copyTo(img(cv::Rect(10, 10, vignetteDst.cols, vignetteDst.rows)));
-
-	int fontFace = cv::FONT_HERSHEY_DUPLEX;
-	int fontScale = 1;
-	cv::putText(img, "Name : ", cv::Point(20 + size.width, 40), fontFace, fontScale, cv::Scalar::all(255), 1, CV_AA);
-	cv::putText(img, "Age : ", cv::Point(20 + size.width, 80), fontFace, fontScale, cv::Scalar::all(255), 1, CV_AA);
-
-	//cv::namedWindow("Final", 0);
-	//cv::resizeWindow("Final", 680, 400);
-	//cv::imshow("Final", img);
-
-	return vignetteDst;
+	else
+	{
+		currentEyeVignette.copyTo(currentFaceVignette(cv::Rect(currentFaceVignette.rows - subSize, 0, currentEyeVignette.cols, currentEyeVignette.rows)));
+		currentFaceVignette.copyTo(img(cv::Rect(10, 10, currentFaceVignette.cols, currentFaceVignette.rows)));
+	}
+	return cv::Mat();
 }

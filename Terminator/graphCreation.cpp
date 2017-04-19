@@ -158,7 +158,7 @@ std::vector<cv::Mat> GetGraphSplitChannels(cv::Mat img, int step, int height, in
 
 	//std::vector<cv::Mat> data = { histImageB, histImageG, histImageR };
 
-	return { histImageB, histImageG, histImageR, grid };
+	return { grid, histImageB, histImageG, histImageR };
 }
 
 cv::Mat RedPicture(cv::Mat img)
@@ -193,6 +193,11 @@ cv::Mat GetGraphObjects(int objCount, int height, int width)
 	lastObjectCount.push_back(objCount);
 	int intervalY = width / 10;
 
+	for (int i = 0; i < height; i += intervalY)
+		cv::line(out, cv::Point(0, i), cv::Point(width, i), cv::Scalar(255, 255, 255), 4);
+	for (int i = 0; i < width; i += intervalY)
+		cv::line(out, cv::Point(i, 0), cv::Point(i, height), cv::Scalar(255, 255, 255), 4);
+
 	for (int i = 1; i< lastObjectCount.size(); ++i)
 	{
 		/*auto pt1 = cv::Point(intervalY*(i - 1), 0);
@@ -207,11 +212,6 @@ cv::Mat GetGraphObjects(int objCount, int height, int width)
 
 		
 	}
-
-	for (int i = 0; i < height; i += intervalY)
-		cv::line(out, cv::Point(0, i), cv::Point(width, i), cv::Scalar(255, 255, 255));
-	for (int i = 0; i < width; i += intervalY)
-		cv::line(out, cv::Point(i, 0), cv::Point(i, height), cv::Scalar(255, 255, 255));
 
 	cv::imshow("ObjCount", out);
 

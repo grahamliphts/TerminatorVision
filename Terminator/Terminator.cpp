@@ -159,6 +159,22 @@ void draw(std::vector<Object> objectList, std::vector<Face> faceList, cv::Mat Gr
 		}
 		cv::putText(imgresult, useless, cv::Point(0, (img.rows / 2) + (20*line)), fontFace, fontScale, cv::Scalar::all(255), 1, CV_AA);
 	}
+
+	//Graph
+	auto pipVect = GetGraphSplitChannels(img);
+	for (cv::Mat mat : pipVect)
+	{
+		cv::Mat tmp(mat.size() / 3, CV_8UC4);
+		resize(mat, tmp, cv::Size(tmp.size()));
+		tmp.copyTo(imgresult(cv::Rect(imgresult.cols - tmp.cols, imgresult.rows - tmp.rows, tmp.cols, tmp.rows)), tmp);
+	}
+
+	//Graph obj
+	auto pip = GetGraphObjects(objectList.size());
+	cv::Mat tmp(pip.size() / 3, CV_8UC4);
+	resize(pip, tmp, cv::Size(tmp.size()));
+	tmp.copyTo(imgresult(cv::Rect(0, imgresult.rows - tmp.rows, tmp.cols, tmp.rows)), tmp);
+
 	imshow("Terminator Vision", imgresult);
 	//int key2 = cv::waitKey(20);
 }

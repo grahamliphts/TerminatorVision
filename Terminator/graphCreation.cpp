@@ -105,9 +105,9 @@ std::vector<cv::Mat> GetGraphSplitChannels(cv::Mat img, int step, int height, in
 	int hist_h = height;
 	int bin_w = cvRound(static_cast<double>(hist_w) / histSize);
 
-	cv::Mat histImageB(hist_h, hist_w, CV_8UC3, cv::Scalar(0, 0, 0));
-	cv::Mat histImageG(hist_h, hist_w, CV_8UC3, cv::Scalar(0, 0, 0));
-	cv::Mat histImageR(hist_h, hist_w, CV_8UC3, cv::Scalar(0, 0, 0));
+	cv::Mat histImageB(hist_h, hist_w, CV_8UC4, cv::Scalar(0, 0, 0, 0));
+	cv::Mat histImageG(hist_h, hist_w, CV_8UC4, cv::Scalar(0, 0, 0, 0));
+	cv::Mat histImageR(hist_h, hist_w, CV_8UC4, cv::Scalar(0, 0, 0, 0));
 
 	/// Normalize the result to [ 0, histImage.rows ]
 	normalize(b_hist, b_hist, 0, histImageB.rows, cv::NORM_MINMAX, -1, cv::Mat());
@@ -149,7 +149,7 @@ std::vector<cv::Mat> GetGraphSplitChannels(cv::Mat img, int step, int height, in
 	}
 
 	const int dist = 50;
-	cv::Mat grid(hist_h, hist_w, CV_8UC3, cv::Scalar(0, 0, 0));
+	cv::Mat grid(hist_h, hist_w, CV_8UC4, cv::Scalar(0, 0, 0));
 
 	for (int i = 0; i < height; i += dist)
 		cv::line(grid, cv::Point(0, i), cv::Point(width, i), cv::Scalar(255, 255, 255), 4);
@@ -184,7 +184,7 @@ cv::Mat RedPicture(cv::Mat img)
 
 cv::Mat GetGraphObjects(int objCount, int height, int width)
 {
-	cv::Mat out(height, width, CV_8UC3);
+	cv::Mat out(height, width, CV_8UC4);
 	out.setTo(0);
 
 	if (lastObjectCount.size() == 10)
@@ -213,11 +213,12 @@ cv::Mat GetGraphObjects(int objCount, int height, int width)
 		
 	}
 
-	cv::imshow("ObjCount", out);
+	//cv::imshow("ObjCount", out);
 
 	return out;
 }
 
+// deprecated
 void connectAll(cv::Mat img, int objCount)
 {
 	cv::Mat out(img);

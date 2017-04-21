@@ -9,6 +9,8 @@ Vignette::Vignette(cv::Mat& img)
 	size = 150;
 	subSize = 50;
 
+	changedFace = false;
+
 	currentFaceVignette = img.clone();
 	currentFaceVignette.setTo(cv::Scalar(0, 0, 0));
 
@@ -53,5 +55,17 @@ cv::Mat Vignette::Process(cv::Mat& img, std::vector<Face>& faces)
 		currentEyeVignette.copyTo(currentFaceVignette(cv::Rect(currentFaceVignette.rows - subSize, 0, currentEyeVignette.cols, currentEyeVignette.rows)));
 		currentFaceVignette.copyTo(img(cv::Rect(10, 10, currentFaceVignette.cols, currentFaceVignette.rows)));
 	}
+
+	double s = cv::sum(currentFaceVignette)[0] + cv::sum(currentFaceVignette)[1] + cv::sum(currentFaceVignette)[2];
+	double epsilon = sumPixels * valCompare;
+
+	if (fabs(sumPixels - s) < epsilon)
+		sumPixels = s;
+	else
+	{
+		sumPixels = s;
+		changedFace = true;
+	}
+	
 	return cv::Mat();
 }

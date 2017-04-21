@@ -156,6 +156,11 @@ void draw(std::vector<Object> objectList, std::vector<Face> faceList, cv::Mat Gr
 	cv::String name = "Name : " + randomName[indexName];
 	cv::putText(imgresult, name, cv::Point(20 + vignetteManager.size, 40), fontFace, fontScale, cv::Scalar::all(255), 1, CV_AA);
 
+	if( faceList.size() >0 &&  faceList[0].isSmile)
+		cv::putText(imgresult, "Target Happy", cv::Point(20 + vignetteManager.size, 60), fontFace, fontScale, cv::Scalar::all(255), 1, CV_AA);
+	else
+		cv::putText(imgresult, "** Analyzing feels **", cv::Point(20 + vignetteManager.size, 60), fontFace, fontScale, cv::Scalar::all(255), 1, CV_AA);
+
 	for (int line = 0; line < 5; line++)
 	{
 		cv::String useless;

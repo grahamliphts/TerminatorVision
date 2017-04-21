@@ -30,15 +30,15 @@ std::vector<Object> ObjectDetection(cv::Mat img)
 
 	// Filter by Circularity
 	params.filterByCircularity = false;
-	//params.minCircularity = 0.1;
+	params.minCircularity = 0.1;
 
 	// Filter by Convexity
-	params.filterByConvexity = false;
+	params.filterByConvexity = true;
 	params.minConvexity = 0.01;
 
 	// Filter by Inertia
 	params.filterByInertia = true;
-	params.minInertiaRatio = 0.01;
+	params.minInertiaRatio = 0.1;
 	params.maxInertiaRatio = 1;
 	#pragma endregion
 
@@ -48,18 +48,30 @@ std::vector<Object> ObjectDetection(cv::Mat img)
 
 	//cvtColor(img, gray_image, CV_BGR2GRAY);
 	cvtColor(img, gray_image, COLOR_RGB2GRAY);
-	threshold(gray_image, treshold_black_image, 100, 255, ThresholdTypes::THRESH_BINARY);
-	GaussianBlur(treshold_black_image, treshold_black_image, Size(9, 9), 0, 0, BORDER_DEFAULT);
-	threshold(treshold_black_image, treshold_black_image, 20, 255, ThresholdTypes::THRESH_BINARY);
+	threshold(gray_image, treshold_black_image, 75, 255, ThresholdTypes::THRESH_BINARY);
+	GaussianBlur(treshold_black_image, treshold_black_image, Size(11, 11), 0, 0, BORDER_DEFAULT);
+	threshold(treshold_black_image, treshold_black_image, 10, 255, ThresholdTypes::THRESH_BINARY);
+	detector->detect(treshold_black_image, keypoints);
 
-	threshold(gray_image, treshold_white_image, 100, 255, ThresholdTypes::THRESH_BINARY_INV);
-	GaussianBlur(treshold_white_image, treshold_white_image, Size(9, 9), 0, 0, BORDER_DEFAULT);
+	for (int i = 0; i < keypoints.size(); i++)
+	{
+		Object blob;
+
+		blob.barycentre = point(keypoints[i].pt.x, keypoints[i].pt.y);
+
+		blob.outterRect.x = keypoints[i].pt.x - keypoints[i].size;
+		blob.outterRect.y = keypoints[i].pt.y - keypoints[i].size;
+		blob.outterRect.width = keypoints[i].size * 2;
+		blob.outterRect.height = keypoints[i].size * 2;
+
+		listBlob.push_back(blob);
+	}
+
+	threshold(gray_image, treshold_white_image, 45, 255, ThresholdTypes::THRESH_BINARY_INV);
+	GaussianBlur(treshold_white_image, treshold_white_image, Size(11, 11), 0, 0, BORDER_DEFAULT);
 	threshold(treshold_white_image, treshold_white_image, 10, 255, ThresholdTypes::THRESH_BINARY);
 
-	bitwise_xor(treshold_white_image, treshold_black_image, treshold_image);
-	threshold(treshold_image, treshold_image, 100, 255, ThresholdTypes::THRESH_BINARY_INV);
-
-	detector->detect(treshold_image, keypoints);
+	detector->detect(treshold_white_image, keypoints);
 
 	for (int i = 0; i < keypoints.size(); i++)
 	{
@@ -74,13 +86,14 @@ std::vector<Object> ObjectDetection(cv::Mat img)
 		
 		listBlob.push_back(blob);
 	}
-	imshow("treshold_image", treshold_image);
+	//imshow("treshold_white_image", treshold_white_image);
+	//imshow("treshold_black_image", treshold_black_image);
 
 	Mat im_with_keypoints;
 	drawKeypoints(img, keypoints, im_with_keypoints, Scalar(0, 0, 255), DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
 	//imshow("keypoints", im_with_keypoints);
 
-	ShowObject(img, listBlob);
+	//ShowObject(img, listBlob);
 	//waitKey();
 
 	return listBlob;
@@ -162,7 +175,7 @@ void ShowObject(cv::Mat img, std::vector<Object> objects)
 			merge(rgba, 4, dst);
 
 			imgResult = OverlayImage(imgResult, dst, Point(blob.outterRect.x, blob.outterRect.y));
-			//(imgResult, blob.outterRect, Scalar(255, 255, 255));
+			rectangle(imgResult, blob.outterRect, Scalar(255, 255, 255));
 		}
 	}
 

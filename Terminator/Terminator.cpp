@@ -15,6 +15,7 @@ int main()
 #ifdef VIDEOMODE
 	cv::VideoCapture cameraStream("video.avi");
 #else
+	
 	cv::VideoCapture cameraStream(0);
 #endif
 
@@ -196,7 +197,9 @@ void draw(std::vector<Object> objectList, std::vector<Face> faceList, cv::Mat Gr
 	cv::Point objCounter((interval/3) * 10, imgresult.size().height - objectList.size() * 5 );
 	cv::putText(imgresult, std::to_string(objectList.size()), objCounter, fontFace, fontScale, cv::Scalar::all(255));
 
+	//cv::resize(imgresult, imgresult, cv::Size(imgresult.cols  * 2 , imgresult.rows * 2));
 	imshow("Terminator Vision", imgresult);
+	//cv::resizeWindow("Terminator Vision", 800, 800);
 	//int key2 = cv::waitKey(20);
 }
 

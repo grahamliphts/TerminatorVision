@@ -79,6 +79,7 @@ void draw(std::vector<Object> objectList, std::vector<Face> faceList, cv::Mat Gr
 				/// Convert it to gray
 				cvtColor(subImageGray, subImageGray, cv::COLOR_RGB2GRAY);
 
+				/*
 				/// Generate grad_x and grad_y
 				cv::Mat grad;
 				cv::Mat grad_x, grad_y;
@@ -94,11 +95,14 @@ void draw(std::vector<Object> objectList, std::vector<Face> faceList, cv::Mat Gr
 				Sobel(subImageGray, grad_y, ddepth, 0, 1, 3, scale, delta, cv::BORDER_DEFAULT);
 				convertScaleAbs(grad_y, abs_grad_y);
 
-				addWeighted(abs_grad_x, 0.5, abs_grad_y, 0.5, 0, grad);
+				addWeighted(abs_grad_x, 0.5, abs_grad_y, 0.5, 0, grad);*/
+
+				cv::Canny(subImageGray, subImageGray, 20, 120, 3);
 
 				cv::Mat dst;
-				cv::Mat rgba[4] = { grad,grad,grad,grad };
+				cv::Mat rgba[4] = { subImageGray,subImageGray,subImageGray,subImageGray };
 				merge(rgba, 4, dst);
+				//cv::GaussianBlur(dst, dst, cv::Size(3, 3), 0, 0, cv::BORDER_DEFAULT);
 
 				imgresult = OverlayImage(imgresult, dst, cv::Point(blob.outterRect.x, blob.outterRect.y));
 				rectangle(imgresult, blob.outterRect, cv::Scalar(255, 255, 255));

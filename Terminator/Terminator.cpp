@@ -6,6 +6,7 @@
 #include <time.h>
 
 std::vector<int> lastObjectCount;
+int indexName = 0;
 
 int main()
 {
@@ -136,15 +137,23 @@ void draw(std::vector<Object> objectList, std::vector<Face> faceList, cv::Mat Gr
 		rectangle(imgresult, blob.outterRect, cv::Scalar(255, 255, 255));
 	}
 
+
 	//vignette.copyTo(imgresult(cv::Rect(10, 10, vignette.cols, vignette.rows)));
 	std::string randomName[] = { "Robert", "Luna MoonSilver", "John Cena" };
 
 	int fontFace = cv::FONT_HERSHEY_COMPLEX_SMALL;
 	int fontScale = 1;
 
+	if (vignetteManager.changedFace)
+	{
+		int randomNumber = rand() % 3;
+		while (randomNumber == indexName)
+			randomNumber = rand() % 3;
 
-	int randomNumber = rand() % 3;
-	cv::String name = "Name : " + randomName[randomNumber];
+		indexName = randomNumber;
+		vignetteManager.changedFace = false;
+	}
+	cv::String name = "Name : " + randomName[indexName];
 	cv::putText(imgresult, name, cv::Point(20 + vignetteManager.size, 40), fontFace, fontScale, cv::Scalar::all(255), 1, CV_AA);
 
 	for (int line = 0; line < 5; line++)
@@ -199,7 +208,8 @@ void update(cv::VideoCapture cameraStream)
 	cameraStream.read(currentImg);
 	Vignette vignetteManager(currentImg);
 
-	while (true) {
+	while (true) 
+	{
 		cameraStream.read(currentImg);
 		//currentImg = cv::imread("john-cena.jpg", CV_LOAD_IMAGE_COLOR);
 		//currentImg = cv::imread("Terminator_metal.jpg", CV_LOAD_IMAGE_COLOR);

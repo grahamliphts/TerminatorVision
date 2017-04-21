@@ -101,7 +101,7 @@ void draw(std::vector<Object> objectList, std::vector<Face> faceList, cv::Mat Gr
 				cv::Mat dst;
 				cv::Mat rgba[4] = { subImageGray,subImageGray,subImageGray,subImageGray };
 				merge(rgba, 4, dst);
-				cv::GaussianBlur(dst, dst, cv::Size(3, 3), 0, 0, cv::BORDER_DEFAULT);
+				//cv::GaussianBlur(dst, dst, cv::Size(3, 3), 0, 0, cv::BORDER_DEFAULT);
 
 				imgresult = OverlayImage(imgresult, dst, cv::Point(blob.outterRect.x, blob.outterRect.y));
 				rectangle(imgresult, blob.outterRect, cv::Scalar(255, 255, 255));

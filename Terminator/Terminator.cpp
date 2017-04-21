@@ -202,7 +202,7 @@ void update(cv::VideoCapture cameraStream)
 	while (true) {
 		cameraStream.read(currentImg);
 		//currentImg = cv::imread("john-cena.jpg", CV_LOAD_IMAGE_COLOR);
-		currentImg = cv::imread("Terminator_metal.jpg", CV_LOAD_IMAGE_COLOR);
+		//currentImg = cv::imread("Terminator_metal.jpg", CV_LOAD_IMAGE_COLOR);
 		//imshow("cam", currentImg);
 
 		objects = ObjectDetection(currentImg);

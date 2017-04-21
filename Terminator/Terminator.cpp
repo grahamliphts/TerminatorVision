@@ -1,21 +1,25 @@
 // Terminator.cpp: definit le point d'entree pour l'application console.
 //
 
+//#define VIDEOMODE
+
 #include "terminator.h"
 #include <cstdlib>
 #include <time.h>
-
+#include <fstream>
 std::vector<int> lastObjectCount;
 
 int main()
 {
-
+#ifdef VIDEOMODE
+	cv::VideoCapture cameraStream("video.avi");
+#else
 	cv::VideoCapture cameraStream(0);
-
+#endif
 
 	if (!cameraStream.isOpened())
 	{
-		std::cout << "cannot open camera";
+		std::cout << "cannot open camera or video File" << std::endl;
 
 		cvWaitKey(0);
 		return 0;

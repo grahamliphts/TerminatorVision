@@ -208,9 +208,9 @@ cv::Mat GetGraphObjects(int objCount, int height, int width)
 		cv::Point pts[] = { pt1, pt2, pt3, pt4, pt1 };
 		fillConvexPoly(out, pts, 5, cv::Scalar(255, 255, 255));*/
 
-		cv::line(out, cv::Point(intervalY*(i - 1), lastObjectCount[i - 1] * 10), cv::Point(intervalY*i, lastObjectCount[i] * 10), cv::Scalar(255, 255, 255), 8, 8, 0);
-
-		
+		cv::line(out, cv::Point(intervalY*(i-1), height - lastObjectCount[i - 1] * 10),
+			cv::Point(intervalY*i, height - lastObjectCount[i] * 10),
+			cv::Scalar(255, 255, 255), 8, 8, 0);
 	}
 
 	//cv::imshow("ObjCount", out);

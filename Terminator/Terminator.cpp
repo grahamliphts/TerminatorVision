@@ -175,10 +175,13 @@ void draw(std::vector<Object> objectList, std::vector<Face> faceList, cv::Mat Gr
 	}
 
 	//Graph obj
-	auto pip = GetGraphObjects(objectList.size());
+	int interval;
+	auto pip = GetGraphObjects(objectList.size(), interval);
 	cv::Mat tmp(pip.size() / 3, CV_8UC4);
 	resize(pip, tmp, cv::Size(tmp.size()));
 	tmp.copyTo(imgresult(cv::Rect(0, imgresult.rows - tmp.rows, tmp.cols, tmp.rows)), tmp);
+	cv::Point objCounter((interval/3) * 10, imgresult.size().height - objectList.size() * 5 );
+	cv::putText(imgresult, std::to_string(objectList.size()), objCounter, fontFace, fontScale, cv::Scalar::all(255));
 
 	imshow("Terminator Vision", imgresult);
 	//int key2 = cv::waitKey(20);

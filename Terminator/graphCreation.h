@@ -7,6 +7,6 @@ std::vector<cv::Mat> GetGraphSplitChannels(cv::Mat img, int step = 8, int height
 cv::Mat RedPicture(cv::Mat img);
 
 extern std::vector<int> lastObjectCount;
-cv::Mat GetGraphObjects(int objCount, int height = 400, int width = 512);
+cv::Mat GetGraphObjects(int objCount, int& intervalYout, int height = 400, int width = 512);
 
 void connectAll(cv::Mat img, int);

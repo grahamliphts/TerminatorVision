@@ -182,7 +182,7 @@ cv::Mat RedPicture(cv::Mat img)
 	return outR;
 }
 
-cv::Mat GetGraphObjects(int objCount, int height, int width)
+cv::Mat GetGraphObjects(int objCount, int& intervalYout, int height, int width)
 {
 	cv::Mat out(height, width, CV_8UC4);
 	out.setTo(0);
@@ -192,6 +192,7 @@ cv::Mat GetGraphObjects(int objCount, int height, int width)
 
 	lastObjectCount.push_back(objCount);
 	int intervalY = width / 10;
+	intervalYout = intervalY;
 
 	for (int i = 0; i < height; i += intervalY)
 		cv::line(out, cv::Point(0, i), cv::Point(width, i), cv::Scalar(255, 255, 255), 4);
@@ -233,7 +234,8 @@ void connectAll(cv::Mat img, int objCount)
 		tmp.copyTo(out(cv::Rect(out.cols - tmp.cols, out.rows - tmp.rows, tmp.cols, tmp.rows)), tmp);
 	}
 
-	auto pip = GetGraphObjects(objCount);
+	int interval;
+	auto pip = GetGraphObjects(objCount, interval);
 	cv::Mat tmp(pip.size() / 2, CV_8UC3);
 	resize(pip, tmp, cv::Size(tmp.size()));
 	tmp.copyTo(out(cv::Rect(0, out.rows - tmp.rows, tmp.cols, tmp.rows)), tmp);
